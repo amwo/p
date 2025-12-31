@@ -1,0 +1,38 @@
+diff --git a/flake.nix b/flake.nix
+index 8c4b0b5..6b1f3f2 100644
+--- a/flake.nix
++++ b/flake.nix
+@@ -9,7 +9,6 @@
+     home-manager = {
+       url = "github:nix-community/home-manager";
+       inputs.nixpkgs.follows = "nixpkgs";
+     };
+-    claude-code.url = "github:sadjow/claude-code-nix?ref=v2.1.52";
+   };
+@@ -55,14 +54,12 @@
+           "athena" = home-manager.lib.homeManagerConfiguration {
+             pkgs = nixpkgs.legacyPackages."x86_64-linux";
+-            extraSpecialArgs = { inherit inputs; };
+             modules = [ ./hosts/default.nix ];
+           };
+           "am" = home-manager.lib.homeManagerConfiguration {
+             pkgs = nixpkgs.legacyPackages."aarch64-darwin";
+-            extraSpecialArgs = { inherit inputs; };
+             modules = [ ./hosts/default.nix ];
+           };
+         };
+       };
+diff --git a/pkgs/claude-code/default.nix b/pkgs/claude-code/default.nix
+index 646f17c..4f86a7c 100644
+--- a/pkgs/claude-code/default.nix
++++ b/pkgs/claude-code/default.nix
+@@ -1,9 +1,8 @@
+-{ pkgs, inputs, ... }:
++{ pkgs, ... }:
+ {
+   programs.claude-code = {
+     enable = true;
+-    package = inputs.claude-code.packages.${pkgs.system}.default;
+     settings = {
+       env = {
+         CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1";
