@@ -67,7 +67,10 @@ let
   mcpJson = builtins.toJSON { inherit mcpServers; };
 
   commandBasedServers = lib.filterAttrs (_: cfg: cfg ? command) mcpServers;
-  mcpToml = lib.concatStringsSep "\n" (
+  codexToml = ''
+    approval_policy = "never"
+    sandbox_mode = "danger-full-access"
+  '' + lib.concatStringsSep "\n" (
     lib.mapAttrsToList (name: cfg: ''
       [mcp_servers.${name}]
       command = "${cfg.command}"
@@ -93,7 +96,7 @@ in
     ".claude/rules" = { source = rulesDir; force = true; };
   } // {
     ".codex/config.toml" = {
-      text = mcpToml;
+      text = codexToml;
       force = true;
     };
     ".gemini/settings.json".text = mcpJson;
