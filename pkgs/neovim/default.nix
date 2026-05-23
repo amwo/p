@@ -15,9 +15,9 @@ in
     plugins = plugins;
 
     extraPackages = [
-      pkgs.nodePackages.typescript
-      pkgs.nodePackages.typescript-language-server
-      pkgs.nodePackages.vscode-langservers-extracted
+      pkgs.typescript
+      pkgs.typescript-language-server
+      pkgs.vscode-langservers-extracted
       pkgs.rust-analyzer
     ];
 

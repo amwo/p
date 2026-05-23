@@ -1,6 +1,6 @@
 { pkgs, ... }:
 {
   home.packages = [
-    pkgs.nodePackages.eslint
+    pkgs.eslint
   ];
 }

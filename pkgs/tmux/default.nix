@@ -32,6 +32,7 @@
       bind -n C-S-Up resize-pane -U 5
       bind -n C-S-Right resize-pane -R 5
       bind Space copy-mode
+      bind t command-prompt -I "#W" "rename-window '%%'"
       bind z source-file ~/.config/tmux/tmux.conf \; display "Reloaded!"
 
 
