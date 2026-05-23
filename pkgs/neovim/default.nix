@@ -232,6 +232,10 @@ in
           root_markers = {
             "eslint.config.js",
             "eslint.config.mjs",
+            "eslint.config.cjs",
+            "eslint.config.ts",
+            "eslint.config.mts",
+            "eslint.config.cts",
             ".eslintrc",
             ".eslintrc.js",
             ".eslintrc.cjs",
@@ -240,6 +244,37 @@ in
             ".eslintrc.yml",
             "package.json",
           },
+          -- vscode-eslint-language-server expects the VS Code `eslint.*`
+          -- settings; without them it receives `undefined` for paths and
+          -- crashes on textDocument/diagnostic (JSON-RPC -32603).
+          settings = {
+            validate = "on",
+            useESLintClass = false,
+            codeActionOnSave = { enable = false, mode = "all" },
+            format = false,
+            quiet = false,
+            onIgnoredFiles = "off",
+            rulesCustomizations = {},
+            run = "onType",
+            problems = { shortenToSingleLine = false },
+            nodePath = "",
+            workingDirectory = { mode = "location" },
+            codeAction = {
+              disableRuleComment = { enable = true, location = "separateLine" },
+              showDocumentation = { enable = true },
+            },
+          },
+          before_init = function(_, config)
+            -- The server needs an explicit workspaceFolder derived from the
+            -- resolved root; Neovim does not provide one by default.
+            local root = config.root_dir
+            if root then
+              config.settings.workspaceFolder = {
+                uri = root,
+                name = vim.fn.fnamemodify(root, ":t"),
+              }
+            end
+          end,
         }
 
         lsp.config.rust_analyzer = {
