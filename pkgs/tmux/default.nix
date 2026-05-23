@@ -38,13 +38,15 @@
       set-option -g base-index 1
       set-option -g bell-action none
 
-      set -g status-justify centre
-      set -g status-left " #[fg=colour242](#H)#[default] "
+      set -g status-position top
+      set -g status-justify left
+      set -g status-left ""
       set -g status-right ""
-      set -g window-status-format "#[bg=#111111,fg=colour240]―――"
-      set -g window-status-current-format "#[bg=#111111,fg=colour255]―――"
+      set -g window-status-separator ""
+      set -g window-status-format "#[bg=#111111,fg=colour240] #I:#W "
+      set -g window-status-current-format "#[bg=colour255,fg=#111111,bold] #I:#W "
       set -g status-style "bg=#111111,fg=white"
-      set -g status off
+      set -g status on
 
       set -g window-style 'fg=colour245,bg=#111111'
       set -g window-active-style 'fg=white,bg=#111111'
