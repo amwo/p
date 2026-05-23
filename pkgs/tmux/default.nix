@@ -39,7 +39,7 @@
       set-option -g bell-action none
 
       set -g status-position bottom
-      set -g status-justify left
+      set -g status-justify centre
       set -g status-left ""
       set -g status-right ""
       set -g window-status-separator ""
