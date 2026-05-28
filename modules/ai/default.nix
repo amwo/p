@@ -141,7 +141,7 @@ in
 {
   home.file = {
     ".claude/CLAUDE.md".text = fullContent "claude";
-    ".codex/instructions.md".text = fullContent "codex";
+    ".codex/AGENTS.md".text = fullContent "codex";
     ".gemini/GEMINI.md".text = fullContent "gemini";
 
     ".claude/skills" = { source = skillsDir; force = true; };
@@ -173,6 +173,9 @@ in
   );
 
   home.activation.removeConflictingDirs = lib.hm.dag.entryBefore [ "checkLinkTargets" ] ''
+    rm -f "$HOME/.claude.json"
+    rm -f "$HOME/.codex/instructions.md"
+
     if [ -L "$HOME/.codex/skills" ]; then
       rm -f "$HOME/.codex/skills"
     fi
@@ -197,7 +200,8 @@ in
   '';
 
   home.activation.claudeMcpConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    target="$HOME/.claude.json"
+    target="$HOME/.claude/settings.json"
+    mkdir -p "$HOME/.claude"
     rm -f "$target"
     install -m 600 ${pkgs.writeText "claude.json" mcpJson} "$target"
   '';
