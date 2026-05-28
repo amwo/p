@@ -1,8 +1,11 @@
 { pkgs, lib, ... }:
 {
-  nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
-    "claude-code"
-  ];
+  nixpkgs.config.allowUnfreePredicate =
+    pkg:
+    builtins.elem (lib.getName pkg) [
+      "claude-code"
+      "github-copilot-cli"
+    ];
 
   home = {
     username = "am";
@@ -15,9 +18,11 @@
     ../pkgs/clippy
     ../pkgs/claude-code
     ../pkgs/codex
+    ../pkgs/copilot-cli
     ../pkgs/direnv
     ../pkgs/eslint
     ../pkgs/fzf
+    ../pkgs/gemini-cli
     ../pkgs/gh
     ../pkgs/git
     ../pkgs/htop
