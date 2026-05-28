@@ -13,6 +13,11 @@ let
   '';
 
   skillsDir = "${dir}/skills";
+  skillNames = lib.filter (name: name != ".system") (
+    lib.attrNames (
+      lib.filterAttrs (_: type: type == "directory") (builtins.readDir skillsDir)
+    )
+  );
   agentsDir = "${dir}/agents";
   rulesDir = "${dir}/rules";
   dirExists = path: builtins.pathExists path;
@@ -47,8 +52,8 @@ let
       args = [ "-y" "@sveltejs/mcp" ];
     };
     storybook-mcp = {
-      command = "npx";
-      args = [ "-y" "@storybook/addon-mcp" ];
+      type = "http";
+      url = "http://localhost:6006/mcp";
     };
     vuetify-mcp = {
       command = "npx";
@@ -86,7 +91,6 @@ in
     ".gemini/GEMINI.md".text = fullContent "gemini";
 
     ".claude/skills" = { source = skillsDir; force = true; };
-    ".codex/skills" = { source = skillsDir; force = true; };
     ".gemini/skills" = { source = skillsDir; force = true; };
 
     ".claude/agents" = { source = agentsDir; force = true; };
@@ -101,14 +105,31 @@ in
     };
     ".gemini/settings.json".text = mcpJson;
     ".cursor/mcp.json".text = mcpJson;
-  };
+  } // lib.listToAttrs (
+    map (name: {
+      name = ".codex/skills/${name}";
+      value = {
+        source = "${skillsDir}/${name}";
+        force = true;
+      };
+    }) skillNames
+  );
 
   home.activation.removeConflictingDirs = lib.hm.dag.entryBefore [ "checkLinkTargets" ] ''
+    if [ -L "$HOME/.codex/skills" ]; then
+      rm -f "$HOME/.codex/skills"
+    fi
+    mkdir -p "$HOME/.codex/skills"
+    for skill in ${lib.concatStringsSep " " skillNames}; do
+      if [ -e "$HOME/.codex/skills/$skill" ] || [ -L "$HOME/.codex/skills/$skill" ]; then
+        rm -rf "$HOME/.codex/skills/$skill"
+      fi
+    done
+
     for dir in \
       "$HOME/.claude/skills" \
       "$HOME/.claude/agents" \
       "$HOME/.claude/rules" \
-      "$HOME/.codex/skills" \
       "$HOME/.gemini/skills" \
       "$HOME/.gemini/agents"
     do
