@@ -1,5 +1,12 @@
 # Git Workflow
 
+## Commit Discipline
+
+- NEVER commit without explicit user request or standing repository instruction
+- When commits are authorized, commit after each logical unit of work
+- Keep each commit focused, reviewable, and independently explainable
+- NEVER push without explicit user request
+
 ## Commit Message Format
 
 ```
@@ -38,5 +45,6 @@ When creating PRs:
    - Fix MEDIUM issues when possible
 
 4. **Commit & Push**
+   - Commit after each logical unit of work when commits are authorized
    - Detailed commit messages
    - Follow conventional commits format

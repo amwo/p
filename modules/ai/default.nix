@@ -11,6 +11,15 @@ let
     # Tool-specific
     ${toolSpecific tool}
   '';
+  cursorRule = ''
+    ---
+    description: Common AI agent rules
+    globs:
+    alwaysApply: true
+    ---
+
+    ${fullContent "cursor"}
+  '';
 
   skillsDir = "${dir}/skills";
   skillNames = lib.filter (name: name != ".system") (
@@ -19,6 +28,51 @@ let
     )
   );
   agentsDir = "${dir}/agents";
+  agentCommon = pkgs.writeText "agent-common.md" common;
+  buildAgentsDir = name: extraCommands: pkgs.runCommand name { } ''
+    cp -r ${agentsDir} "$out"
+    chmod -R u+w "$out"
+    for file in "$out"/*.md; do
+      tmp="$file.tmp"
+      awk -v commonFile="${agentCommon}" '
+        BEGIN {
+          while ((getline line < commonFile) > 0) {
+            common = common line "\n"
+          }
+          close(commonFile)
+        }
+        NR == 1 && $0 == "---" {
+          print
+          inFrontmatter = 1
+          next
+        }
+        inFrontmatter && $0 == "---" {
+          print
+          print ""
+          printf "%s\n", common
+          inFrontmatter = 0
+          next
+        }
+        { print }
+      ' "$file" > "$tmp"
+      mv "$tmp" "$file"
+    done
+    ${extraCommands}
+  '';
+  claudeAgentsDir = buildAgentsDir "claude-agents" "";
+  geminiAgentsDir = buildAgentsDir "gemini-agents" ''
+    for file in "$out"/*.md; do
+      sed -i \
+        -e 's/"Read"/"read_file"/g' \
+        -e 's/"Write"/"write_file"/g' \
+        -e 's/"Edit"/"replace"/g' \
+        -e 's/"Bash"/"run_shell_command"/g' \
+        -e 's/"Grep"/"grep_search"/g' \
+        -e 's/"Glob"/"glob"/g' \
+        -e '/^model: opus$/d' \
+        "$file"
+    done
+  '';
   rulesDir = "${dir}/rules";
   dirExists = path: builtins.pathExists path;
 
@@ -93,8 +147,8 @@ in
     ".claude/skills" = { source = skillsDir; force = true; };
     ".gemini/skills" = { source = skillsDir; force = true; };
 
-    ".claude/agents" = { source = agentsDir; force = true; };
-    ".gemini/agents" = { source = agentsDir; force = true; };
+    ".claude/agents" = { source = claudeAgentsDir; force = true; };
+    ".gemini/agents" = { source = geminiAgentsDir; force = true; };
 
   } // lib.optionalAttrs (dirExists rulesDir) {
     ".claude/rules" = { source = rulesDir; force = true; };
@@ -103,8 +157,11 @@ in
       text = codexToml;
       force = true;
     };
-    ".gemini/settings.json".text = mcpJson;
     ".cursor/mcp.json".text = mcpJson;
+    ".cursor/rules/common.mdc" = {
+      text = cursorRule;
+      force = true;
+    };
   } // lib.listToAttrs (
     map (name: {
       name = ".codex/skills/${name}";
@@ -143,5 +200,14 @@ in
     target="$HOME/.claude.json"
     rm -f "$target"
     install -m 600 ${pkgs.writeText "claude.json" mcpJson} "$target"
+  '';
+
+  home.activation.geminiSettingsConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    target="$HOME/.gemini/settings.json"
+    mkdir -p "$HOME/.gemini"
+    if [ ! -e "$target" ] || [ -L "$target" ]; then
+      rm -f "$target"
+      install -m 600 ${pkgs.writeText "gemini-settings.json" mcpJson} "$target"
+    fi
   '';
 }
