@@ -1,2 +1,11 @@
 .DS_Store
 .cache
+
+# nix build output
+result
+
+# agentmemory local artifacts (skills, state, lockfile)
+.claude/
+.agents/
+data/
+skills-lock.json

@@ -153,10 +153,12 @@ in
   } // lib.optionalAttrs (dirExists rulesDir) {
     ".claude/rules" = { source = rulesDir; force = true; };
   } // {
-    ".codex/config.toml" = {
-      text = codexToml;
-      force = true;
-    };
+    # NOTE: ~/.codex/config.toml is intentionally NOT managed here. The official
+    # agentmemory Codex integration (`codex plugin add`) mutates config.toml at
+    # runtime to register the plugin + its hooks, which fails against a read-only
+    # Nix store symlink. config.toml is therefore owned by codex; YOLO defaults
+    # and base MCP servers are seeded once as a real file (see codexToml below /
+    # docs). Re-seed manually if you change the shared mcpServers list.
     ".cursor/mcp.json".text = mcpJson;
     ".cursor/rules/common.mdc" = {
       text = cursorRule;
