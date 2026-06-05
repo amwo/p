@@ -50,6 +50,7 @@
     ../pkgs/nodejs
     ../pkgs/nixfmt
     ../pkgs/prettier
+    ../pkgs/ripgrep
     ../pkgs/rustfmt
     ../pkgs/tmux
     ../pkgs/zsh
