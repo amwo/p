@@ -3,9 +3,18 @@
   nixpkgs.config.allowUnfreePredicate =
     pkg:
     builtins.elem (lib.getName pkg) [
+      "antigravity-cli"
       "claude-code"
       "github-copilot-cli"
     ];
+
+  nix = {
+    gc = {
+      automatic = true;
+      dates = "weekly";
+      options = "--delete-older-than 7d";
+    };
+  };
 
   home = {
     username = "am";
@@ -31,7 +40,7 @@
     ../pkgs/direnv
     ../pkgs/eslint
     ../pkgs/fzf
-    ../pkgs/gemini-cli
+    ../pkgs/antigravity-cli
     ../pkgs/gh
     ../pkgs/git
     ../pkgs/htop
