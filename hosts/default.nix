@@ -20,8 +20,11 @@
     username = "am";
     homeDirectory = if pkgs.stdenv.isDarwin then "/Users/am" else "/home/am";
     stateVersion = "24.11";
-    # User-writable npm global prefix (~/.local) and the iii engine binary live here.
-    sessionPath = [ "$HOME/.local/bin" ];
+    # Keep the user profile first so tools installed by Home Manager are visible.
+    sessionPath = [
+      "$HOME/.nix-profile/bin"
+      "$HOME/.local/bin"
+    ];
     sessionVariables.VIEWER_ALLOWED_HOSTS = "athena.tailbbaea.ts.net,athena.tailbbaea.ts.net:3113,100.74.242.44,100.74.242.44:3113";
   };
 
