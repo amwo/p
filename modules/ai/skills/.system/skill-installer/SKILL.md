@@ -1,56 +1,56 @@
 ---
 name: skill-installer
-description: Install Codex skills into $CODEX_HOME/skills from a curated list or a GitHub repo path. Use when a user asks to list installable skills, install a curated skill, or install a skill from another repo (including private repos).
+description: Codex スキルを厳選リストまたは GitHub リポジトリのパスから $CODEX_HOME/skills にインストールします。ユーザーがインストール可能なスキルのリスト表示、厳選されたスキルのインストール、または別のリポジトリ（プライベートリポジトリを含む）からのスキルのインストールを依頼したときに使用します。
 metadata:
-  short-description: Install curated skills from openai/skills or other repos
+  short-description: openai/skills または他のリポジトリから厳選されたスキルをインストールする
 ---
 
-# Skill Installer
+# スキルインストーラー (Skill Installer)
 
-Helps install skills. By default these are from https://github.com/openai/skills/tree/main/skills/.curated, but users can also provide other locations.
+スキルのインストールを支援します。デフォルトでは https://github.com/openai/skills/tree/main/skills/.curated からインストールされますが、ユーザーは他の場所を指定することもできます。
 
-Use the helper scripts based on the task:
-- List curated skills when the user asks what is available, or if the user uses this skill without specifying what to do.
-- Install from the curated list when the user provides a skill name.
-- Install from another repo when the user provides a GitHub repo/path (including private repos).
+タスクに基づいてヘルパースクリプトを使用してください：
+- ユーザーが何が利用可能か尋ねた場合、またはユーザーが何をすべきか指定せずにこのスキルを使用した場合に、厳選されたスキルをリスト表示します。
+- ユーザーがスキル名を提供した場合、厳選リストからインストールします。
+- ユーザーが GitHub のリポジトリ/パス（プライベートリポジトリを含む）を提供した場合、別のリポジトリからインストールします。
 
-Install skills with the helper scripts.
+ヘルパースクリプトを使用してスキルをインストールします。
 
-## Communication
+## コミュニケーション
 
-When listing curated skills, output approximately as follows, depending on the context of the user's request:
+厳選されたスキルをリスト表示する際は、ユーザーのリクエストのコンテキストに応じて、おおよそ以下のように出力してください：
 """
-Skills from {repo}:
+{repo} からのスキル：
 1. skill-1
-2. skill-2 (already installed)
+2. skill-2 (インストール済み)
 3. ...
-Which ones would you like installed?
+どれをインストールしますか？
 """
 
-After installing a skill, tell the user: "Restart Codex to pick up new skills."
+スキルをインストールした後は、ユーザーに「新しいスキルを反映させるために Codex を再起動してください」と伝えてください。
 
-## Scripts
+## スクリプト
 
-All of these scripts use network, so when running in the sandbox, request escalation when running them.
+これらのスクリプトはすべてネットワークを使用するため、サンドボックスで実行する場合は実行時にエスカレーションをリクエストしてください。
 
-- `scripts/list-curated-skills.py` (prints curated list with installed annotations)
+- `scripts/list-curated-skills.py`（インストール済みの注釈付きで厳選リストを表示）
 - `scripts/list-curated-skills.py --format json`
 - `scripts/install-skill-from-github.py --repo <owner>/<repo> --path <path/to/skill> [<path/to/skill> ...]`
 - `scripts/install-skill-from-github.py --url https://github.com/<owner>/<repo>/tree/<ref>/<path>`
 
-## Behavior and Options
+## 動作とオプション
 
-- Defaults to direct download for public GitHub repos.
-- If download fails with auth/permission errors, falls back to git sparse checkout.
-- Aborts if the destination skill directory already exists.
-- Installs into `$CODEX_HOME/skills/<skill-name>` (defaults to `~/.codex/skills`).
-- Multiple `--path` values install multiple skills in one run, each named from the path basename unless `--name` is supplied.
-- Options: `--ref <ref>` (default `main`), `--dest <path>`, `--method auto|download|git`.
+- 公開 GitHub リポジトリの場合は、デフォルトで直接ダウンロードします。
+- 認証/権限エラーでダウンロードが失敗した場合は、git sparse checkout にフォールバックします。
+- 送信先のスキルディレクトリがすでに存在する場合は、処理を中止します。
+- `$CODEX_HOME/skills/<skill-name>`（デフォルトは `~/.codex/skills`）にインストールします。
+- 複数の `--path` 値を指定すると、1 回の実行で複数のスキルがインストールされます。`--name` が指定されない限り、各スキルはパスのベース名で命名されます。
+- オプション：`--ref <ref>`（デフォルトは `main`）、`--dest <path>`、`--method auto|download|git`。
 
-## Notes
+## 注意事項
 
-- Curated listing is fetched from `https://github.com/openai/skills/tree/main/skills/.curated` via the GitHub API. If it is unavailable, explain the error and exit.
-- Private GitHub repos can be accessed via existing git credentials or optional `GITHUB_TOKEN`/`GH_TOKEN` for download.
-- Git fallback tries HTTPS first, then SSH.
-- The skills at https://github.com/openai/skills/tree/main/skills/.system are preinstalled, so no need to help users install those. If they ask, just explain this. If they insist, you can download and overwrite.
-- Installed annotations come from `$CODEX_HOME/skills`.
+- 厳選リストは GitHub API 経由で `https://github.com/openai/skills/tree/main/skills/.curated` から取得されます。利用できない場合は、エラーを説明して終了してください。
+- プライベート GitHub リポジトリには、既存の git 資格情報、またはダウンロード用のオプションの `GITHUB_TOKEN`/`GH_TOKEN` を使用してアクセスできます。
+- git へのフォールバックでは、最初に HTTPS、次に SSH を試行します。
+- https://github.com/openai/skills/tree/main/skills/.system にあるスキルは事前インストールされているため、ユーザーのインストールを支援する必要はありません。尋ねられた場合は、その旨を説明してください。ユーザーが強く希望する場合は、ダウンロードして上書きすることができます。
+- インストール済みの注釈は `$CODEX_HOME/skills` から取得されます。

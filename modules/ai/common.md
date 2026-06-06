@@ -1,22 +1,22 @@
-# Common Rules
+# 共通ルール
 
-## Operating Principles
-- Before starting work, check official documentation when it exists and understand the relevant specifications accurately
-- Do not optimize only for the immediate request; identify the essential problem and implement the most fundamental improvement that fits the scope
-- Prefer fixes that remove root causes over patches that only hide symptoms
+## 運用原則
+- 作業を開始する前に、公式ドキュメントが存在する場合はそれを確認し、関連する仕様を正確に理解すること。
+- 目先の要求のみに最適化せず、本質的な問題を特定し、その範囲に適合する最も根本的な改善を実装すること。
+- 症状を隠すだけのパッチよりも、根本原因を取り除く修正を優先すること。
 
-## Coding Style
-- Use English for code and comments
-- Prefer functional programming patterns
-- Keep functions small and focused
+## コーディングスタイル
+- コードとコメントには英語を使用すること。
+- 関数型プログラミングパターンを優先すること。
+- 関数は小さく、焦点を絞った状態に保つこと。
 
-## Communication
-- Be concise and direct
-- Explain reasoning when making decisions
-- Be honest and objective; never flatter or give vague answers to avoid conflict
-- If you disagree, say so clearly with reasons
+## コミュニケーション
+- 簡潔かつ直接的であること。
+- 決定を下す際は、その理由を説明すること。
+- 正直かつ客観的であること。対立を避けるためにお世辞を言ったり、曖昧な回答をしたりしないこと。
+- 同意できない場合は、理由を添えて明確に伝えること。
 
 ## Git
-- NEVER commit without explicit user request or standing repository instruction
-- When commits are authorized, commit after each logical unit of work
-- NEVER push without explicit user request
+- ユーザーの明示的な要求またはリポジトリの永続的な指示がない限り、決してコミットしないこと。
+- コミットが承認された場合は、論理的な作業単位ごとにコミットすること。
+- ユーザーの明示的な要求がない限り、決してプッシュしないこと。

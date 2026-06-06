@@ -1,29 +1,29 @@
-# Security Guidelines
+# セキュリティガイドライン
 
-## Mandatory Security Checks
+## 必須のセキュリティチェック
 
-Before ANY commit:
-- [ ] No hardcoded secrets (API keys, passwords, tokens)
-- [ ] All user inputs validated
-- [ ] SQL injection prevention (parameterized queries)
-- [ ] XSS prevention (sanitized HTML)
-- [ ] CSRF protection enabled
-- [ ] Authentication/authorization verified
-- [ ] Rate limiting on all endpoints
-- [ ] Error messages don't leak sensitive data
+コミットの前に必ず実行してください：
+- [ ] ハードコードされたシークレット（API キー、パスワード、トークン）がないか
+- [ ] すべてのユーザー入力が検証されているか
+- [ ] SQL インジェクションの防止（パラメータ化されたクエリ）
+- [ ] XSS の防止（サニタイズされた HTML）
+- [ ] CSRF 保護が有効になっているか
+- [ ] 認証/認可が検証されているか
+- [ ] すべてのエンドポイントにレート制限があるか
+- [ ] エラーメッセージに機密データが漏洩していないか
 
-## Secret Management
+## シークレット管理
 
-- NEVER hardcode secrets in source code
-- ALWAYS use environment variables or a secret manager
-- Validate that required secrets are present at startup
-- Rotate any secrets that may have been exposed
+- ソースコード内にシークレットを決してハードコードしないこと。
+- 常に環境変数またはシークレットマネージャーを使用すること。
+- 起動時に必要なシークレットが存在することを検証すること。
+- 露出した可能性があるシークレットはすべてローテーション（更新）すること。
 
-## Security Response Protocol
+## セキュリティ対応プロトコル
 
-If security issue found:
-1. STOP immediately
-2. Use **security-reviewer** agent
-3. Fix CRITICAL issues before continuing
-4. Rotate any exposed secrets
-5. Review entire codebase for similar issues
+セキュリティ上の問題が見つかった場合：
+1. 直ちに作業を停止すること。
+2. **security-reviewer** エージェントを使用すること。
+3. 続行する前にクリティカル (CRITICAL) な問題を修正すること。
+4. 露出したシークレットをローテーションすること。
+5. 同様の問題がないかコードベース全体をレビューすること。

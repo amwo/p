@@ -1,11 +1,11 @@
-# Rust Testing
+# Rust テスト
 
-> This file extends [common/testing.md](../common/testing.md) with Rust specific content.
-> Based on [The Rust Book](https://doc.rust-lang.org/book/ch11-00-testing.html).
+> このファイルは [common/testing.md](../common/testing.md) を Rust 固有の内容で拡張したものです。
+> [The Rust Book](https://doc.rust-lang.org/book/ch11-00-testing.html) に基づいています。
 
-## Unit Tests
+## ユニットテスト
 
-Place in the same file with `#[cfg(test)]`:
+`#[cfg(test)]` を使用して同じファイル内に配置します：
 
 ```rust
 pub fn add(a: i32, b: i32) -> i32 {
@@ -29,9 +29,9 @@ mod tests {
 }
 ```
 
-## Integration Tests
+## 統合テスト
 
-Place in `tests/` directory:
+`tests/` ディレクトリに配置します：
 
 ```
 src/
@@ -39,7 +39,7 @@ src/
 tests/
   integration_test.rs
   common/
-    mod.rs  # shared test utilities
+    mod.rs  # 共有テストユーティリティ
 ```
 
 ```rust
@@ -53,9 +53,9 @@ fn test_public_api() {
 }
 ```
 
-## Property-Based Testing
+## プロパティベーステスト (Property-Based Testing)
 
-Use `proptest` for generative testing:
+生成テストのために `proptest` を使用してください：
 
 ```rust
 use proptest::prelude::*;
@@ -70,9 +70,9 @@ proptest! {
 }
 ```
 
-## Test Runner
+## テストランナー
 
-Use `cargo-nextest` for faster test execution:
+テスト実行を高速化するために `cargo-nextest` を使用してください：
 
 ```bash
 cargo install cargo-nextest

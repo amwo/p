@@ -1,11 +1,11 @@
-# TypeScript/JavaScript Testing
+# TypeScript/JavaScript テスト
 
-> This file extends [common/testing.md](../common/testing.md) with TypeScript/JavaScript specific content.
+> このファイルは [common/testing.md](../common/testing.md) を TypeScript/JavaScript 固有の内容で拡張したものです。
 
-## E2E Testing
+## E2E テスト
 
-Use **Playwright** as the E2E testing framework for critical user flows.
+重要なユーザーフローの E2E テストフレームワークとして **Playwright** を使用してください。
 
-## Agent Support
+## エージェントのサポート
 
-- **e2e-runner** - Playwright E2E testing specialist
+- **e2e-runner** - Playwright E2E テストのスペシャリスト

@@ -1,55 +1,55 @@
-# Performance Optimization
+# パフォーマンスの最適化
 
-## Model Selection Strategy
+## モデル選択戦略
 
-**Haiku 4.5** (90% of Sonnet capability, 3x cost savings):
-- Lightweight agents with frequent invocation
-- Pair programming and code generation
-- Worker agents in multi-agent systems
+**Haiku 4.5** (Sonnet の 90% の能力、コストを 3 分の 1 に削減)：
+- 頻繁に呼び出される軽量なエージェント。
+- ペアプログラミングとコード生成。
+- マルチエージェントシステムにおけるワーカーエージェント。
 
-**Sonnet 4.5** (Best coding model):
-- Main development work
-- Orchestrating multi-agent workflows
-- Complex coding tasks
+**Sonnet 4.5** (最高のコーディングモデル)：
+- 主要な開発作業。
+- マルチエージェントワークフローのオーケストレーション。
+- 複雑なコーディングタスク。
 
-**Opus 4.5** (Deepest reasoning):
-- Complex architectural decisions
-- Maximum reasoning requirements
-- Research and analysis tasks
+**Opus 4.5** (最も深い推論)：
+- 複雑なアーキテクチャ上の決定。
+- 最大限の推論が必要な要件。
+- 調査および分析タスク。
 
-## Context Window Management
+## コンテキストウィンドウの管理
 
-Avoid last 20% of context window for:
-- Large-scale refactoring
-- Feature implementation spanning multiple files
-- Debugging complex interactions
+以下の作業では、コンテキストウィンドウの最後の 20% を避けてください：
+- 大規模なリファクタリング。
+- 複数ファイルにわたる機能実装。
+- 複雑な相互作用のデバッグ。
 
-Lower context sensitivity tasks:
-- Single-file edits
-- Independent utility creation
-- Documentation updates
-- Simple bug fixes
+コンテキストの影響を受けにくいタスク：
+- 単一ファイルの編集。
+- 独立したユーティリティの作成。
+- ドキュメントの更新。
+- シンプルなバグ修正。
 
-## Extended Thinking + Plan Mode
+## Extended Thinking + プランモード
 
-Extended thinking is enabled by default, reserving up to 31,999 tokens for internal reasoning.
+Extended Thinking（拡張推論）はデフォルトで有効になっており、内部推論のために最大 31,999 トークンを予約します。
 
-Control extended thinking via:
-- **Toggle**: Option+T (macOS) / Alt+T (Windows/Linux)
-- **Config**: Set `alwaysThinkingEnabled` in `~/.claude/settings.json`
-- **Budget cap**: `export MAX_THINKING_TOKENS=10000`
-- **Verbose mode**: Ctrl+O to see thinking output
+Extended Thinking の制御方法：
+- **切り替え**: Option+T (macOS) / Alt+T (Windows/Linux)
+- **設定**: `~/.claude/settings.json` で `alwaysThinkingEnabled` を設定
+- **予算上限**: `export MAX_THINKING_TOKENS=10000`
+- **詳細モード**: Ctrl+O で推論出力を表示
 
-For complex tasks requiring deep reasoning:
-1. Ensure extended thinking is enabled (on by default)
-2. Enable **Plan Mode** for structured approach
-3. Use multiple critique rounds for thorough analysis
-4. Use split role sub-agents for diverse perspectives
+深い推論が必要な複雑なタスクの場合：
+1. Extended Thinking が有効であることを確認する（デフォルトでオン）。
+2. 構造化されたアプローチのために **プランモード (Plan Mode)** を有効にする。
+3. 徹底的な分析のために、複数回の批判ラウンド (critique rounds) を行う。
+4. 多様な視点を得るために、役割を分担したサブエージェントを使用する。
 
-## Build Troubleshooting
+## ビルドのトラブルシューティング
 
-If build fails:
-1. Use **build-error-resolver** agent
-2. Analyze error messages
-3. Fix incrementally
-4. Verify after each fix
+ビルドが失敗した場合：
+1. **build-error-resolver** エージェントを使用する。
+2. エラーメッセージを分析する。
+3. 段階的に修正する。
+4. 各修正後に検証する。

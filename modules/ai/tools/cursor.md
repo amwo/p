@@ -1,4 +1,4 @@
 # Cursor
 
-- Integrate with editor context
-- Use inline suggestions effectively
+- エディタのコンテキストと統合してください。
+- インラインの提案を効果的に活用してください。

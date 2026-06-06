@@ -1,9 +1,9 @@
-# Rust Patterns
+# Rust パターン
 
-> This file extends [common/patterns.md](../common/patterns.md) with Rust specific content.
-> Based on [Rust Design Patterns](https://rust-unofficial.github.io/patterns/).
+> このファイルは [common/patterns.md](../common/patterns.md) を Rust 固有の内容で拡張したものです。
+> [Rust Design Patterns](https://rust-unofficial.github.io/patterns/) に基づいています。
 
-## Builder Pattern
+## ビルダーパターン (Builder Pattern)
 
 ```rust
 #[derive(Default)]
@@ -30,12 +30,12 @@ impl RequestBuilder {
     }
 
     pub fn build(self) -> Result<Request, BuildError> {
-        // validate and construct
+        // バリデーションと構築
     }
 }
 ```
 
-## Newtype Pattern
+## Newtype パターン
 
 ```rust
 pub struct UserId(u64);
@@ -52,7 +52,7 @@ impl Email {
 }
 ```
 
-## Result Type Alias
+## Result 型のエイリアス
 
 ```rust
 pub type Result<T> = std::result::Result<T, Error>;
@@ -62,7 +62,7 @@ pub fn process() -> Result<Data> {
 }
 ```
 
-## Extension Traits
+## Extension Traits (拡張トレイト)
 
 ```rust
 pub trait StrExt {
@@ -80,7 +80,7 @@ impl StrExt for str {
 }
 ```
 
-## RAII Guards
+## RAII ガード
 
 ```rust
 pub struct MutexGuard<'a, T> {

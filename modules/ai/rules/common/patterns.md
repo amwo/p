@@ -1,31 +1,31 @@
-# Common Patterns
+# 共通パターン
 
-## Skeleton Projects
+## スケルトンプロジェクト
 
-When implementing new functionality:
-1. Search for battle-tested skeleton projects
-2. Use parallel agents to evaluate options:
-   - Security assessment
-   - Extensibility analysis
-   - Relevance scoring
-   - Implementation planning
-3. Clone best match as foundation
-4. Iterate within proven structure
+新しい機能を実装する際：
+1. 実績のあるスケルトンプロジェクトを検索する。
+2. 並列エージェントを使用してオプションを評価する：
+   - セキュリティ評価
+   - 拡張性分析
+   - 関連性スコアリング
+   - 実装計画
+3. 基盤として最適なものをクローンする。
+4. 実証済みの構造内で反復開発を行う。
 
-## Design Patterns
+## デザインパターン
 
-### Repository Pattern
+### リポジトリパターン (Repository Pattern)
 
-Encapsulate data access behind a consistent interface:
-- Define standard operations: findAll, findById, create, update, delete
-- Concrete implementations handle storage details (database, API, file, etc.)
-- Business logic depends on the abstract interface, not the storage mechanism
-- Enables easy swapping of data sources and simplifies testing with mocks
+データアクセスを一貫したインターフェースの背後に隠蔽します：
+- 標準的な操作 (findAll, findById, create, update, delete) を定義する。
+- 具体的な実装がストレージの詳細（データベース、API、ファイルなど）を処理する。
+- ビジネスロジックはストレージメカニズムではなく、抽象化されたインターフェースに依存する。
+- データソースの簡単な切り替えを可能にし、モックを使用したテストを簡素化する。
 
-### API Response Format
+### API レスポンス形式
 
-Use a consistent envelope for all API responses:
-- Include a success/status indicator
-- Include the data payload (nullable on error)
-- Include an error message field (nullable on success)
-- Include metadata for paginated responses (total, page, limit)
+すべての API レスポンスに一貫したエンベロープ（包み）を使用します：
+- 成功/ステータスインジケーターを含める。
+- データペイロードを含める（エラー時は null 可能）。
+- エラーメッセージフィールドを含める（成功時は null 可能）。
+- ページネーションされたレスポンスにはメタデータ（合計、ページ、制限）を含める。

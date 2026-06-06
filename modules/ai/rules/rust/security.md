@@ -1,42 +1,42 @@
-# Rust Security
+# Rust セキュリティ
 
-> This file extends [common/security.md](../common/security.md) with Rust specific content.
-> Based on [RustSec Advisory Database](https://rustsec.org/) and Rust Secure Code Working Group.
+> このファイルは [common/security.md](../common/security.md) を Rust 固有の内容で拡張したものです。
+> [RustSec Advisory Database](https://rustsec.org/) および Rust Secure Code Working Group に基づいています。
 
-## Dependency Auditing
+## 依存関係の監査
 
-Use `cargo-audit` to check for known vulnerabilities:
+既知の脆弱性をチェックするために `cargo-audit` を使用してください：
 
 ```bash
 cargo install cargo-audit
 cargo audit
 ```
 
-Use `cargo-deny` for comprehensive checks:
+包括的なチェックには `cargo-deny` を使用してください：
 
 ```bash
 cargo install cargo-deny
 cargo deny check
 ```
 
-## Minimize Unsafe Code
+## Unsafe コードの最小化
 
 ```rust
-// WRONG: Unsafe without justification
+// 間違い: 正当な理由のない unsafe
 unsafe {
     ptr::write(dest, value);
 }
 
-// CORRECT: Document safety invariants
-// SAFETY: `dest` is valid, aligned, and not aliased
+// 正しい: 安全性の不変条件を文書化する
+// SAFETY: `dest` は有効で整列されており、エイリアスされていない
 unsafe {
     ptr::write(dest, value);
 }
 ```
 
-## Integer Overflow
+## 整数オーバーフロー
 
-Enable overflow checks in release builds:
+リリースビルドでオーバーフローチェックを有効にしてください：
 
 ```toml
 # Cargo.toml
@@ -44,23 +44,23 @@ Enable overflow checks in release builds:
 overflow-checks = true
 ```
 
-Use checked arithmetic:
+チェック付き算術演算を使用してください：
 
 ```rust
-// WRONG: Silent overflow in release
+// 間違い: リリースビルドでの黙ったオーバーフロー
 let result = a + b;
 
-// CORRECT: Explicit handling
+// 正しい: 明示的な処理
 let result = a.checked_add(b).ok_or(Error::Overflow)?;
 ```
 
-## Cryptography
+## 暗号化
 
-Use audited libraries:
+監査済みのライブラリを使用してください：
 
-- `ring` - TLS, cryptographic primitives
-- `rustls` - TLS implementation
-- `RustCrypto` - algorithm implementations
+- `ring` - TLS、暗号プリミティブ
+- `rustls` - TLS 実装
+- `RustCrypto` - アルゴリズムの実装
 
 ```rust
 use ring::rand::{SecureRandom, SystemRandom};
@@ -70,13 +70,13 @@ let mut key = [0u8; 32];
 rng.fill(&mut key)?;
 ```
 
-## Input Validation
+## 入力バリデーション
 
-Validate at system boundaries:
+システムの境界でバリデーションを行ってください：
 
 ```rust
 pub fn process_input(input: &str) -> Result<Output, Error> {
-    let validated = Input::parse(input)?;  // validate first
-    // ... process validated input
+    let validated = Input::parse(input)?;  // 最初にバリデーション
+    // ... バリデーション済み入力の処理
 }
 ```

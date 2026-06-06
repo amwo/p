@@ -1,71 +1,93 @@
-# Rust Coding Style
+# Rust フック
 
-> This file extends [common/coding-style.md](../common/coding-style.md) with Rust specific content.
-> Based on [Rust API Guidelines](https://rust-lang.github.io/api-guidelines/) and [Clippy](https://doc.rust-lang.org/clippy/).
+> このファイルは [common/hooks.md](../common/hooks.md) を Rust 固有の内容で拡張したものです。
 
-## Formatting
-
-Use `rustfmt` for consistent formatting:
+## Pre-commit フック
 
 ```bash
-cargo fmt --all
-cargo fmt --all -- --check  # CI
-```
+#!/bin/sh
+set -e
 
-## Linting
+# フォーマットチェック
+cargo fmt --all -- --check
 
-Use `clippy` with recommended lints:
-
-```bash
+# リンティング
 cargo clippy -- -D warnings
-cargo clippy -- -D clippy::all -D clippy::pedantic
+
+# セキュリティ監査
+cargo audit
+
+# テスト
+cargo test --all
 ```
 
-### Recommended Clippy Lints
+## CI パイプライン
 
-```rust
-#![warn(clippy::all, clippy::pedantic)]
-#![deny(clippy::unwrap_used, clippy::expect_used)]
-#![allow(clippy::module_name_repetitions)]
+```yaml
+# .github/workflows/rust.yml
+name: Rust CI
+
+on: [push, pull_request]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - name: Format
+        run: cargo fmt --all -- --check
+
+      - name: Clippy
+        run: cargo clippy -- -D warnings
+
+      - name: Test
+        run: cargo test --all
+
+      - name: Audit
+        run: |
+          cargo install cargo-audit
+          cargo audit
 ```
 
-## Error Handling
+## 推奨ツール
 
-Never use `unwrap()` or `expect()` in library code:
-
-```rust
-// WRONG: May panic
-let value = option.unwrap();
-let result = fallible_op().expect("failed");
-
-// CORRECT: Propagate errors
-let value = option.ok_or(MyError::NotFound)?;
-let result = fallible_op()?;
-
-// CORRECT: Pattern matching
-if let Some(value) = option {
-    process(value);
-}
+```bash
+# 開発ツールのインストール
+cargo install cargo-audit    # セキュリティ監査
+cargo install cargo-deny     # 依存関係チェック
+cargo install cargo-nextest  # 高速なテストランナー
+cargo install cargo-watch    # 変更時の自動再ビルド
 ```
 
-## Ownership
+## ウォッチモード
 
-Prefer borrowing over cloning:
+```bash
+# ファイル変更時にテストを自動実行
+cargo watch -x test
+
+# clippy を自動実行
+cargo watch -x clippy
+```
+(clone) よりも借用 (borrowing) を優先してください：
 
 ```rust
-// WRONG: Unnecessary clone
+// 間違い: 不要なクローン
 fn process(data: Vec<u8>) { ... }
 process(my_data.clone());
 
-// CORRECT: Borrow when possible
+// 正しい: 可能な限り借用する
 fn process(data: &[u8]) { ... }
 process(&my_data);
 ```
 
-## Naming Conventions
+## 命名規則
 
-- Types: `PascalCase`
-- Functions/methods: `snake_case`
-- Constants: `SCREAMING_SNAKE_CASE`
-- Lifetimes: short lowercase (`'a`, `'de`)
-- Conversions: `as_`, `to_`, `into_` prefixes
+- 型 (Types): `PascalCase`
+- 関数/メソッド: `snake_case`
+- 定数: `SCREAMING_SNAKE_CASE`
+- ライフタイム: 短い小文字 (`'a`, `'de`)
+- 変換: `as_`, `to_`, `into_` プレフィックス

@@ -1,10 +1,10 @@
-# Claude Code Settings
+# Claude Code 設定
 
-## Attribution
-Attribution disabled globally via `~/.claude/settings.json`.
+## 帰属 (Attribution)
+`~/.claude/settings.local.json` を介して、グローバルで帰属を無効化しています。
 
-## Agents
-Use specialized agents for workflows:
-- **planner** - Create implementation plans
-- **tdd-guide** - Test-driven development guidance
-- **code-reviewer** - Immediate code review after writing
+## エージェント
+ワークフローには専用のエージェントを使用してください：
+- **planner** - 実装計画の作成
+- **tdd-guide** - テスト駆動開発のガイダンス
+- **code-reviewer** - 記述直後のコードレビュー

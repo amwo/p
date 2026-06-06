@@ -1,66 +1,66 @@
 ---
 name: codex
-description: Delegate tasks to OpenAI Codex CLI agent. Use when the user asks to run something with Codex, get a second opinion from another AI, or delegate a subtask to Codex. Typical queries include "run this with codex", "ask codex to review", "have codex implement", "codex opinion on".
+description: OpenAI Codex CLI エージェントにタスクを委任します。ユーザーが Codex で何かを実行するように依頼したとき、別の AI からセカンドオピニオンを得たいとき、またはサブタスクを Codex に委任したいときに使用します。典型的なクエリには、「これを codex で実行して」、「codex にレビューを依頼して」、「codex に実装させて」、「これについての codex の意見は」などがあります。
 allowed-tools: Bash, Read, Glob, Grep
 user-invocable: true
 disable-model-invocation: true
 ---
 
-# Codex CLI Integration
+# Codex CLI 統合
 
-Delegate tasks to the OpenAI Codex CLI (`codex exec` / `codex review`).
+OpenAI Codex CLI (`codex exec` / `codex review`) にタスクを委任します。
 
-## Usage
+## 使用法
 
 ### `/codex <prompt>`
 
-Run `codex exec` with the given prompt.
+指定されたプロンプトで `codex exec` を実行します。
 
-Steps:
-1. Parse `$ARGUMENTS` for the prompt
-2. If `$ARGUMENTS` starts with `review`, run `codex review` instead of `codex exec`
-3. Run the command with `--full-auto`
-4. Capture and return the output
-5. Summarize the result for the user
+手順：
+1. `$ARGUMENTS` からプロンプトを解析する
+2. `$ARGUMENTS` が `review` で始まる場合は、`codex exec` の代わりに `codex review` を実行する
+3. `--full-auto` を付けてコマンドを実行する
+4. 出力をキャプチャして返す
+5. ユーザーのために結果を要約する
 
-### Subcommands
+### サブコマンド
 
-- **`/codex <prompt>`** — execute a task
-- **`/codex review`** — review uncommitted changes
-- **`/codex review --base main`** — review changes vs base branch
+- **`/codex <prompt>`** — タスクを実行する
+- **`/codex review`** — 未コミットの変更をレビューする
+- **`/codex review --base main`** — ベースブランチとの変更の差分をレビューする
 
-### Model Selection
+### モデルの選択
 
-Append `-m <model>` in arguments to override the default model.
+引数に `-m <model>` を追加して、デフォルトのモデルを上書きします。
 
-### Examples
+### 例
 
 ```
-/codex implement a retry mechanism for the HTTP client
-/codex review the changes in executor.rs
-/codex -m o3 explain the backtest engine architecture
+/codex HTTP クライアントのリトライメカニズムを実装して
+/codex executor.rs の変更をレビューして
+/codex -m o3 バックテストエンジンのアーキテクチャを説明して
 ```
 
-## Execution Template
+## 実行テンプレート
 
 ```bash
-# Task execution (default model)
+# タスクの実行 (デフォルトモデル)
 codex exec --full-auto -C "$(pwd)" "$PROMPT"
 
-# Task execution (specific model)
+# タスクの実行 (特定のモデル)
 codex exec --full-auto -m o3 -C "$(pwd)" "$PROMPT"
 
-# Code review (uncommitted changes)
+# コードレビュー (未コミットの変更)
 codex review --uncommitted "$PROMPT"
 
-# Code review (vs base branch)
+# コードレビュー (ベースブランチとの比較)
 codex review --base main "$PROMPT"
 ```
 
-## Important
+## 重要事項
 
-- Always use `--full-auto` for non-interactive execution
-- Use `-C <dir>` to set the working directory to the current project
-- Set timeout to 300000 (5 min) for complex tasks
-- Output may be long; summarize key findings for the user
-- Codex writes to the filesystem; review its changes before accepting
+- 非対話的な実行には常に `--full-auto` を使用してください。
+- 作業ディレクトリを現在のプロジェクトに設定するために `-C <dir>` を使用してください。
+- 複雑なタスクの場合は、タイムアウトを 300000 (5分) に設定してください。
+- 出力が長くなる可能性があるため、主要な発見事項をユーザーのために要約してください。
+- Codex はファイルシステムに書き込みを行います。変更を受け入れる前にレビューしてください。

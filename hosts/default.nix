@@ -22,13 +22,7 @@
     stateVersion = "24.11";
     # User-writable npm global prefix (~/.local) and the iii engine binary live here.
     sessionPath = [ "$HOME/.local/bin" ];
-
-    # agentmemory's viewer hardcodes a 127.0.0.1 bind and validates the Host
-    # header. Allow the Tailscale-served hostnames so `tailscale serve` (port
-    # 3113) can reverse-proxy it. Not read from ~/.agentmemory/.env, so it must
-    # be a real environment variable.
-    sessionVariables.VIEWER_ALLOWED_HOSTS =
-      "athena.tailbbaea.ts.net,athena.tailbbaea.ts.net:3113,100.74.242.44,100.74.242.44:3113";
+    sessionVariables.VIEWER_ALLOWED_HOSTS = "athena.tailbbaea.ts.net,athena.tailbbaea.ts.net:3113,100.74.242.44,100.74.242.44:3113";
   };
 
   imports = [

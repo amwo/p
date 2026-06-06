@@ -1,13 +1,13 @@
-# Git Workflow
+# Git ワークフロー
 
-## Commit Discipline
+## コミットの規律
 
-- NEVER commit without explicit user request or standing repository instruction
-- When commits are authorized, commit after each logical unit of work
-- Keep each commit focused, reviewable, and independently explainable
-- NEVER push without explicit user request
+- ユーザーの明示的な要求またはリポジトリの永続的な指示がない限り、決してコミットしないこと。
+- コミットが承認された場合は、論理的な作業単位ごとにコミットすること。
+- 各コミットを焦点の絞った、レビュー可能で、独立して説明可能な状態に保つこと。
+- ユーザーの明示的な要求がない限り、決してプッシュしないこと。
 
-## Commit Message Format
+## コミットメッセージの形式
 
 ```
 <type>: <description>
@@ -15,36 +15,36 @@
 <optional body>
 ```
 
-Types: feat, fix, refactor, docs, test, chore, perf, ci
+タイプ (type): feat, fix, refactor, docs, test, chore, perf, ci
 
-## Pull Request Workflow
+## プルリクエストのワークフロー
 
-When creating PRs:
-1. Analyze full commit history (not just latest commit)
-2. Use `git diff [base-branch]...HEAD` to see all changes
-3. Draft comprehensive PR summary
-4. Include test plan with TODOs
-5. Push with `-u` flag if new branch
+PR を作成する際：
+1. 最新のコミットだけでなく、全コミット履歴を分析すること。
+2. すべての変更を確認するために `git diff [base-branch]...HEAD` を使用すること。
+3. 包括的な PR サマリーをドラフトすること。
+4. TODO を含むテスト計画を含めること。
+5. 新しいブランチの場合は `-u` フラグを付けてプッシュすること。
 
-## Feature Implementation Workflow
+## 機能実装ワークフロー
 
-1. **Plan First**
-   - Create implementation plan
-   - Identify dependencies and risks
-   - Break down into phases
+1. **まず計画を立てる**
+   - 実装計画を作成する。
+   - 依存関係とリスクを特定する。
+   - フェーズに分解する。
 
-2. **TDD Approach**
-   - Write tests first (RED)
-   - Implement to pass tests (GREEN)
-   - Refactor (IMPROVE)
-   - Verify 80%+ coverage
+2. **TDD アプローチ**
+   - テストを先に書く (RED)。
+   - テストに合格するように実装する (GREEN)。
+   - リファクタリングする (IMPROVE)。
+   - 80% 以上のカバレッジを確認する。
 
-3. **Code Review**
-   - Review immediately after writing code
-   - Address CRITICAL and HIGH issues
-   - Fix MEDIUM issues when possible
+3. **コードレビュー**
+   - コードを記述した直後にレビューすること。
+   - クリティカル (CRITICAL) および高 (HIGH) の問題に対処すること。
+   - 可能な場合は中 (MEDIUM) の問題も修正すること。
 
-4. **Commit & Push**
-   - Commit after each logical unit of work when commits are authorized
-   - Detailed commit messages
-   - Follow conventional commits format
+4. **コミットとプッシュ**
+   - コミットが承認された場合は、論理的な作業単位ごとにコミットすること。
+   - 詳細なコミットメッセージを記述すること。
+   - Conventional Commits 形式に従うこと。

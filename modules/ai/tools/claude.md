@@ -1,4 +1,4 @@
 # Claude Code
 
-- Use TodoWrite for complex multi-step tasks
-- Prefer Edit over Write for existing files
+- 複雑な複数ステップのタスクには TodoWrite を使用してください。
+- 既存のファイルには Write よりも Edit を優先してください。

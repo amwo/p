@@ -1,4 +1,4 @@
 # Codex
 
-- Focus on code generation accuracy
-- Provide context when needed
+- コード生成の正確性に重点を置いてください。
+- 必要に応じてコンテキストを提供してください。

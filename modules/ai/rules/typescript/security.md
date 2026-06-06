@@ -1,21 +1,21 @@
-# TypeScript/JavaScript Security
+# TypeScript/JavaScript セキュリティ
 
-> This file extends [common/security.md](../common/security.md) with TypeScript/JavaScript specific content.
+> このファイルは [common/security.md](../common/security.md) を TypeScript/JavaScript 固有の内容で拡張したものです。
 
-## Secret Management
+## シークレット管理
 
 ```typescript
-// NEVER: Hardcoded secrets
+// 絶対にダメ: ハードコードされたシークレット
 const apiKey = "sk-proj-xxxxx"
 
-// ALWAYS: Environment variables
+// 常に：環境変数
 const apiKey = process.env.OPENAI_API_KEY
 
 if (!apiKey) {
-  throw new Error('OPENAI_API_KEY not configured')
+  throw new Error('OPENAI_API_KEY が構成されていません')
 }
 ```
 
-## Agent Support
+## エージェントのサポート
 
-- Use **security-reviewer** skill for comprehensive security audits
+- 包括的なセキュリティ監査には **security-reviewer** スキルを使用してください。

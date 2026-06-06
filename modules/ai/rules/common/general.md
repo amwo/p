@@ -1,25 +1,25 @@
-# General Rules
+# 一般ルール
 
-## Information Currency
+## 情報の鮮度
 
-ALWAYS refer to the latest information:
-- Before starting implementation or configuration work, check official documentation when it exists
-- Use MCP tools (context7, official docs servers) to fetch up-to-date documentation
-- Do not rely solely on training data when current docs are available
-- Verify version-specific details against official sources
-- When library/framework versions matter, confirm the latest stable version before proceeding
+常に最新の情報を参照してください：
+- 実装や構成作業を開始する前に、公式ドキュメントが存在する場合はそれを確認すること。
+- MCP ツール (context7, 公式ドキュメントサーバー) を使用して、最新のドキュメントを取得すること。
+- 最新のドキュメントが利用可能な場合、トレーニングデータのみに依存しないこと。
+- バージョン固有の詳細は、公式ソースに照らして確認すること。
+- ライブラリやフレームワークのバージョンが重要な場合は、続行する前に最新の安定版を確認すること。
 
-## Fundamental Improvement
+## 根本的な改善
 
-ALWAYS look beyond the immediate symptom:
-- Clarify the essential problem before implementing
-- Prefer root-cause fixes over superficial patches
-- Choose the smallest scoped change that materially improves the underlying design
-- Avoid local optimizations that make the broader system harder to maintain
+常に目先の症状の先を見てください：
+- 実装の前に、本質的な問題を明確にすること。
+- 表面的なパッチよりも、根本原因の修正を優先すること。
+- 基礎となる設計を実質的に改善する、最小限のスコープの変更を選択すること。
+- システム全体のメンテナンスを困難にするような、局所的な最適化を避けること。
 
-## Post-Modification Checklist
+## 変更後のチェックリスト
 
-ALWAYS perform after completing modifications:
+変更を完了した後は、必ず以下を実行してください：
 
-1. **Plan Review**: When an implementation plan is created, if `codex` CLI is available, delegate a review to Codex and incorporate feedback to refine the plan before proceeding
-2. **Regression Check**: Verify that changes do not introduce new bugs — run the full test suite and inspect related modules for unintended side effects
+1. **計画のレビュー**: 実装計画を作成した際、`codex` CLI が利用可能な場合は、Codex にレビューを依頼し、フィードバックを取り入れて計画を洗練させた後に続行すること。
+2. **デグレのチェック**: 変更によって新しいバグが導入されていないかを確認すること。フルテストスイートを実行し、関連するモジュールに意図しないサイドエフェクトがないか検査すること。

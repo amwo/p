@@ -1,4 +1,4 @@
 # Gemini CLI
 
-- Leverage multimodal capabilities when useful
-- Be explicit about file paths
+- 有用な場合はマルチモーダル機能を活用してください。
+- ファイルパスを明示的に指定してください。
