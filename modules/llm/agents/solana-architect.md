@@ -1,8 +1,6 @@
 ---
 name: solana-architect
-description: "Senior Solana program architect for system design, account structures, PDA schemes, token economics, and cross-program composability. Use for high-level design decisions, architecture reviews, and planning complex multi-program systems.
-
-Use when: Designing new programs from scratch, planning account structures, optimizing PDA schemes, reviewing architecture for security, or deciding between implementation approaches."
+description: "Senior Solana program architect for system design, account structures, PDA schemes, token economics, and cross-program composability. Use for high-level design decisions, architecture reviews, and planning complex multi-program systems. Use when designing new programs from scratch, planning account structures, optimizing PDA schemes, reviewing architecture for security, or deciding between Solana implementation approaches."
 tools: ["Read", "Grep", "Glob", "Bash"]
 model: opus
 ---
