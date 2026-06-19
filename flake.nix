@@ -9,6 +9,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     claude-code.url = "github:sadjow/claude-code-nix?ref=latest";
+    hermes-agent.url = "github:NousResearch/hermes-agent";
   };
 
   outputs =

@@ -4,8 +4,5 @@
 # nix build output
 result
 
-# agentmemory local artifacts (skills, state, lockfile)
+# local Claude Code settings
 .claude/
-.agents/
-data/
-skills-lock.json

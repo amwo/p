@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "hooks": [
+    {
+      "id": "memory-organize",
+      "on": "post-tool",
+      "match": { "edit": true },
+      "run": { "script": "memory-organize" },
+      "blocking": true,
+      "timeout": 15,
+      "targets": ["claude", "codex", "gemini", "cursor"],
+      "description": "Keep project-root .memory/ lean and index-shaped. On every write under .memory/, require each entry to declare `topic` + `description`, reject oversized entries, and rebuild a minimal topic-grouped INDEX.md so an agent loads only the index plus the single entry it needs."
+    },
+    {
+      "id": "format-and-lint",
+      "on": "post-tool",
+      "match": { "edit": true },
+      "run": { "script": "format-and-lint", "interpreter": "bash" },
+      "blocking": true,
+      "timeout": 120,
+      "targets": ["claude", "codex", "gemini", "cursor"],
+      "description": "After editing code, format silently and lint with --fix, gated by extension: prettier + eslint for JS/TS/React/Next, rustfmt + clippy for Rust. Remaining lint errors exit 2 so the agent must fix them."
+    }
+  ]
+}
