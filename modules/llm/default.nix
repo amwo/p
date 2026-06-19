@@ -149,6 +149,11 @@ let
       type = "http";
       url = "http://127.0.0.1:3845/mcp";
     };
+    shadcn = {
+      # official shadcn/ui registry MCP (browse + install components)
+      command = "npx";
+      args = [ "-y" "shadcn@latest" "mcp" ];
+    };
   };
 
   mcpJson = builtins.toJSON { inherit mcpServers; };
