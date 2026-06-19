@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ lib, pkgs, ... }:
 
 let
   dir = ./.;
@@ -51,42 +51,58 @@ let
 
   skillsDir = "${dir}/skills";
   skillNames = lib.filter (name: name != ".system") (
-    lib.attrNames (
-      lib.filterAttrs (_: type: type == "directory") (builtins.readDir skillsDir)
-    )
+    lib.attrNames (lib.filterAttrs (_: type: type == "directory") (builtins.readDir skillsDir))
   );
+  # Fail the build if any SKILL.md frontmatter is not strict-parseable YAML.
+  # Claude Code is lenient but Codex/Gemini reject malformed frontmatter, so
+  # catch it here at apply time instead of silently skipping skills at runtime.
+  validatedSkills = pkgs.runCommand "llm-skills" { nativeBuildInputs = [ pkgs.yq-go ]; } ''
+    for f in ${skillsDir}/*/SKILL.md; do
+      [ -f "$f" ] || continue
+      if ! awk 'NR==1 && $0=="---"{fm=1;next} fm && $0=="---"{exit} fm{print}' "$f" | yq -e '.' >/dev/null 2>/tmp/fmerr; then
+        echo "ERROR: invalid SKILL.md frontmatter (YAML): $f" >&2; cat /tmp/fmerr >&2; exit 1
+      fi
+    done
+    mkdir -p "$out"
+    cp -R ${skillsDir}/. "$out/"
+  '';
   agentsDir = "${dir}/agents";
   agentCommon = pkgs.writeText "agent-common.md" instructions;
-  buildAgentsDir = name: extraCommands: pkgs.runCommand name { } ''
-    cp -r ${agentsDir} "$out"
-    chmod -R u+w "$out"
-    for file in "$out"/*.md; do
-      tmp="$file.tmp"
-      awk -v commonFile="${agentCommon}" '
-        BEGIN {
-          while ((getline line < commonFile) > 0) {
-            common = common line "\n"
+  buildAgentsDir =
+    name: extraCommands:
+    pkgs.runCommand name { nativeBuildInputs = [ pkgs.yq-go ]; } ''
+      cp -r ${agentsDir} "$out"
+      chmod -R u+w "$out"
+      for file in "$out"/*.md; do
+        if ! awk 'NR==1 && $0=="---"{fm=1;next} fm && $0=="---"{exit} fm{print}' "$file" | yq -e '.' >/dev/null 2>/tmp/fmerr; then
+          echo "ERROR: invalid agent frontmatter (YAML): $file" >&2; cat /tmp/fmerr >&2; exit 1
+        fi
+        tmp="$file.tmp"
+        awk -v commonFile="${agentCommon}" '
+          BEGIN {
+            while ((getline line < commonFile) > 0) {
+              common = common line "\n"
+            }
+            close(commonFile)
           }
-          close(commonFile)
-        }
-        NR == 1 && $0 == "---" {
-          print
-          inFrontmatter = 1
-          next
-        }
-        inFrontmatter && $0 == "---" {
-          print
-          print ""
-          printf "%s\n", common
-          inFrontmatter = 0
-          next
-        }
-        { print }
-      ' "$file" > "$tmp"
-      mv "$tmp" "$file"
-    done
-    ${extraCommands}
-  '';
+          NR == 1 && $0 == "---" {
+            print
+            inFrontmatter = 1
+            next
+          }
+          inFrontmatter && $0 == "---" {
+            print
+            print ""
+            printf "%s\n", common
+            inFrontmatter = 0
+            next
+          }
+          { print }
+        ' "$file" > "$tmp"
+        mv "$tmp" "$file"
+      done
+      ${extraCommands}
+    '';
   claudeAgentsDir = buildAgentsDir "claude-agents" "";
   geminiAgentsDir = buildAgentsDir "gemini-agents" ''
     for file in "$out"/*.md; do
@@ -105,7 +121,10 @@ let
   mcpServers = {
     context7 = {
       command = "npx";
-      args = [ "-y" "@upstash/context7-mcp" ];
+      args = [
+        "-y"
+        "@upstash/context7-mcp"
+      ];
     };
     github = {
       # official GitHub MCP (the @modelcontextprotocol/server-github package is archived)
@@ -118,7 +137,10 @@ let
     };
     effect-mcp = {
       command = "npx";
-      args = [ "-y" "@niklaserik/effect-mcp" ];
+      args = [
+        "-y"
+        "@niklaserik/effect-mcp"
+      ];
     };
     storybook-mcp = {
       type = "http";
@@ -126,11 +148,17 @@ let
     };
     next-devtools-mcp = {
       command = "npx";
-      args = [ "-y" "next-devtools-mcp" ];
+      args = [
+        "-y"
+        "next-devtools-mcp"
+      ];
     };
     playwright = {
       command = "npx";
-      args = [ "-y" "@playwright/mcp" ];
+      args = [
+        "-y"
+        "@playwright/mcp"
+      ];
     };
     solana = {
       type = "http";
@@ -138,11 +166,17 @@ let
     };
     chrome-devtools = {
       command = "npx";
-      args = [ "-y" "chrome-devtools-mcp" ];
+      args = [
+        "-y"
+        "chrome-devtools-mcp"
+      ];
     };
     xcodebuildmcp = {
       command = "npx";
-      args = [ "-y" "xcodebuildmcp" ];
+      args = [
+        "-y"
+        "xcodebuildmcp"
+      ];
     };
     figma = {
       # Figma official Dev Mode MCP (desktop app must be running with Dev Mode MCP enabled)
@@ -152,7 +186,11 @@ let
     shadcn = {
       # official shadcn/ui registry MCP (browse + install components)
       command = "npx";
-      args = [ "-y" "shadcn@latest" "mcp" ];
+      args = [
+        "-y"
+        "shadcn@latest"
+        "mcp"
+      ];
     };
   };
 
@@ -171,24 +209,13 @@ let
           ];
         }
       ];
-    } // hooksCompiled.claude;
+    }
+    // hooksCompiled.claude;
   };
   geminiSettingsJson = builtins.toJSON {
     inherit mcpServers;
     hooks = hooksCompiled.gemini;
   };
-
-  commandBasedServers = lib.filterAttrs (_: cfg: cfg ? command) mcpServers;
-  codexToml = ''
-    approval_policy = "never"
-    sandbox_mode = "danger-full-access"
-  '' + lib.concatStringsSep "\n" (
-    lib.mapAttrsToList (name: cfg: ''
-      [mcp_servers.${name}]
-      command = "${cfg.command}"
-      args = [${lib.concatMapStringsSep ", " (a: ''"${a}"'') cfg.args}]
-    '') commandBasedServers
-  );
 
 in
 {
@@ -203,19 +230,31 @@ in
     };
     ".gemini/GEMINI.md".text = instructions;
 
-    ".claude/skills" = { source = skillsDir; force = true; };
-    ".gemini/skills" = { source = skillsDir; force = true; };
+    ".claude/skills" = {
+      source = validatedSkills;
+      force = true;
+    };
+    ".gemini/skills" = {
+      source = validatedSkills;
+      force = true;
+    };
 
-    ".claude/agents" = { source = claudeAgentsDir; force = true; };
-    ".gemini/agents" = { source = geminiAgentsDir; force = true; };
+    ".claude/agents" = {
+      source = claudeAgentsDir;
+      force = true;
+    };
+    ".gemini/agents" = {
+      source = geminiAgentsDir;
+      force = true;
+    };
 
-  } // {
-    # NOTE: ~/.codex/config.toml is intentionally NOT managed here. Codex and
-    # its plugins can mutate config.toml at runtime, which fails against a
-    # read-only Nix store symlink. config.toml is therefore owned by codex; YOLO
-    # defaults and base MCP servers are seeded once as a real file (see
-    # codexToml below / docs). Re-seed manually if you change the shared
-    # mcpServers list.
+  }
+  // {
+    # NOTE: ~/.codex/config.toml is intentionally NOT managed here — Codex mutates
+    # it at runtime, which breaks against a read-only Nix store symlink. Only
+    # Codex hooks (.codex/hooks.json) and skills (.codex/skills/*) are managed
+    # below; MCP servers and other config.toml settings for Codex are seeded
+    # manually (owned by codex).
     ".codex/hooks.json" = {
       text = builtins.toJSON hooksCompiled.codex;
       force = true;
@@ -229,11 +268,12 @@ in
       text = cursorRule;
       force = true;
     };
-  } // lib.listToAttrs (
+  }
+  // lib.listToAttrs (
     map (name: {
       name = ".codex/skills/${name}";
       value = {
-        source = "${skillsDir}/${name}";
+        source = "${validatedSkills}/${name}";
         force = true;
       };
     }) skillNames
