@@ -24,6 +24,7 @@
 - Attach links when supporting evidence exists.
 - Do not cite information that is outdated or no longer valid at the time of the work.
 - Temporary scripts are written and used in Rust.
+- Remove `rtk` command prefix when report to user
 
 # Coding
 

@@ -20,6 +20,16 @@
       "timeout": 120,
       "targets": ["claude", "codex", "gemini", "cursor"],
       "description": "After editing code, format silently and lint with --fix, gated by extension: prettier + eslint for JS/TS/React/Next, rustfmt + clippy for Rust. Remaining lint errors exit 2 so the agent must fix them."
+    },
+    {
+      "id": "loop-progress-guard",
+      "on": "stop",
+      "match": {},
+      "run": { "script": "loop-progress-guard", "interpreter": "bash" },
+      "blocking": true,
+      "timeout": 10,
+      "targets": ["claude", "codex"],
+      "description": "Backstop for regulated improvement loops. Only acts when .improve/active exists: if loop-ctl's latest directive still says continue, exit 2 to refuse a premature stop so the loop pivots instead of giving up."
     }
   ]
 }

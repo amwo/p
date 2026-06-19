@@ -4,5 +4,8 @@
 # nix build output
 result
 
+# rust build output
+target/
+
 # local Claude Code settings
 .claude/

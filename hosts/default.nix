@@ -46,6 +46,7 @@
     ../pkgs/jq
     ../pkgs/less
     ../pkgs/llama-cpp-local
+    ../pkgs/loop-ctl
     ../pkgs/neovim
     ../pkgs/nodejs
     ../pkgs/nixfmt
