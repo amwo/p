@@ -108,36 +108,21 @@ let
       args = [ "-y" "@upstash/context7-mcp" ];
     };
     github = {
-      command = "npx";
-      args = [ "-y" "@modelcontextprotocol/server-github" ];
+      # official GitHub MCP (the @modelcontextprotocol/server-github package is archived)
+      type = "http";
+      url = "https://api.githubcopilot.com/mcp/";
     };
     vercel = {
       type = "http";
       url = "https://mcp.vercel.com";
     };
-    memory = {
-      command = "npx";
-      args = [ "-y" "@modelcontextprotocol/server-memory" ];
-    };
-    sequential-thinking = {
-      command = "npx";
-      args = [ "-y" "@modelcontextprotocol/server-sequential-thinking" ];
-    };
     effect-mcp = {
       command = "npx";
       args = [ "-y" "@niklaserik/effect-mcp" ];
     };
-    svelte-mcp = {
-      command = "npx";
-      args = [ "-y" "@sveltejs/mcp" ];
-    };
     storybook-mcp = {
       type = "http";
       url = "http://localhost:6006/mcp";
-    };
-    vuetify-mcp = {
-      command = "npx";
-      args = [ "-y" "@vuetify/mcp" ];
     };
     next-devtools-mcp = {
       command = "npx";
@@ -146,6 +131,23 @@ let
     playwright = {
       command = "npx";
       args = [ "-y" "@playwright/mcp" ];
+    };
+    solana = {
+      type = "http";
+      url = "https://mcp.solana.com/mcp";
+    };
+    chrome-devtools = {
+      command = "npx";
+      args = [ "-y" "chrome-devtools-mcp" ];
+    };
+    xcodebuildmcp = {
+      command = "npx";
+      args = [ "-y" "xcodebuildmcp" ];
+    };
+    figma = {
+      # Figma official Dev Mode MCP (desktop app must be running with Dev Mode MCP enabled)
+      type = "http";
+      url = "http://127.0.0.1:3845/mcp";
     };
   };
 
