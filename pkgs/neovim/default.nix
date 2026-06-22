@@ -21,12 +21,69 @@ in
       pkgs.typescript-language-server
       pkgs.vscode-langservers-extracted
       pkgs.rust-analyzer
+      pkgs.ripgrep
+    ]
+    ++ pkgs.lib.optionals pkgs.stdenv.isLinux [
+      pkgs.wl-clipboard
+      pkgs.xclip
     ];
 
     initLua = ''
       vim.g.mapleader = " "
 
       vim.o.clipboard = "unnamedplus"
+
+      -- Clipboard provider chosen explicitly so yanks reach the system
+      -- clipboard on both macOS and Arch Linux. Over SSH the local tools
+      -- cannot reach the user's machine, so fall back to OSC 52 escape
+      -- sequences handled by the terminal emulator.
+      do
+        local function exe(name)
+          return vim.fn.executable(name) == 1
+        end
+
+        if (vim.env.SSH_TTY or "") ~= "" then
+          local osc52 = require("vim.ui.clipboard.osc52")
+          vim.g.clipboard = {
+            name = "OSC 52",
+            copy = { ["+"] = osc52.copy("+"), ["*"] = osc52.copy("*") },
+            paste = { ["+"] = osc52.paste("+"), ["*"] = osc52.paste("*") },
+          }
+        elseif exe("pbcopy") then
+          vim.g.clipboard = {
+            name = "pbcopy",
+            copy = { ["+"] = "pbcopy", ["*"] = "pbcopy" },
+            paste = { ["+"] = "pbpaste", ["*"] = "pbpaste" },
+            cache_enabled = 0,
+          }
+        elseif exe("wl-copy") then
+          vim.g.clipboard = {
+            name = "wl-clipboard",
+            copy = {
+              ["+"] = { "wl-copy" },
+              ["*"] = { "wl-copy", "--primary" },
+            },
+            paste = {
+              ["+"] = { "wl-paste", "--no-newline" },
+              ["*"] = { "wl-paste", "--no-newline", "--primary" },
+            },
+            cache_enabled = 0,
+          }
+        elseif exe("xclip") then
+          vim.g.clipboard = {
+            name = "xclip",
+            copy = {
+              ["+"] = { "xclip", "-quiet", "-selection", "clipboard" },
+              ["*"] = { "xclip", "-quiet", "-selection", "primary" },
+            },
+            paste = {
+              ["+"] = { "xclip", "-selection", "clipboard", "-o" },
+              ["*"] = { "xclip", "-selection", "primary", "-o" },
+            },
+            cache_enabled = 0,
+          }
+        end
+      end
       vim.o.expandtab = true
       vim.o.ignorecase = true
       vim.o.shiftwidth = 2
@@ -320,6 +377,7 @@ in
         { "n", "<esc><esc>", ":nohl<CR>" },
         { "n", "<leader>d", ":bdelete<CR>" },
         { "n", "<leader>f", ":FZF<CR>" },
+        { "n", "<leader><leader>", ":ProjectGrep<CR>" },
         { "n", "<leader>n", ":bnext<CR>" },
         { "n", "<leader>p", ":bprevious<CR>" },
         { "n", "<leader>q", ":q<CR>" },

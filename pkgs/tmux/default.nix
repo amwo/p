@@ -14,6 +14,10 @@
       set -as terminal-overrides ",*:Tc"
       set -g mouse on
 
+      # Forward OSC 52 clipboard escapes to the outer terminal (works over SSH).
+      set -g set-clipboard on
+      set -as terminal-features ",*:clipboard"
+
       bind m split-window -vc "#{pane_current_path}"
       bind v split-window -vc "#{pane_current_path}"
       bind enter split-window -hc "#{pane_current_path}"
