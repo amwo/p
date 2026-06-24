@@ -48,15 +48,15 @@
       set -g status-left ""
       set -g status-right ""
       set -g window-status-separator ""
-      set -g window-status-format "#[bg=#383838,fg=colour240] #W "
-      set -g window-status-current-format "#[bg=#383838,fg=colour255,bold] #W "
-      set -g status-style "bg=#383838,fg=white"
+      set -g window-status-format "#[bg=#111111,fg=#333333] #W "
+      set -g window-status-current-format "#[bg=#111111,fg=colour255,bold] #W "
+      set -g status-style "bg=#111111,fg=white"
       set -g status on
 
-      set -g window-style 'fg=colour245,bg=#111111'
-      set -g window-active-style 'fg=white,bg=#111111'
-      set -g pane-border-style "fg=#383838,bg=#111111"
-      set -g pane-active-border-style "fg=#383838,bg=#111111"
+      set -g window-style 'fg=colour245,bg=#000000'
+      set -g window-active-style 'fg=white,bg=#000000'
+      set -g pane-border-style "fg=#111111,bg=#000000"
+      set -g pane-active-border-style "fg=#111111,bg=#000000"
       set -g pane-border-format "#[fg=#383838]#{pane_title}"
     '';
   };

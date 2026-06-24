@@ -195,8 +195,12 @@ let
   };
 
   mcpJson = builtins.toJSON { inherit mcpServers; };
+  # Codex uses TOML `[mcp_servers.<id>]` tables. The transport is inferred from
+  # the keys (url => streamable HTTP, command => stdio), so strip the Claude-only
+  # `type` field. Emitted as JSON here and converted to TOML at activation.
+  codexMcpServers = lib.mapAttrs (_: v: builtins.removeAttrs v [ "type" ]) mcpServers;
+  codexMcpJson = builtins.toJSON { mcp_servers = codexMcpServers; };
   claudeSettingsJson = builtins.toJSON {
-    inherit mcpServers;
     hooks = {
       PreToolUse = [
         {
@@ -280,7 +284,6 @@ in
   );
 
   home.activation.removeConflictingDirs = lib.hm.dag.entryBefore [ "checkLinkTargets" ] ''
-    rm -f "$HOME/.claude.json"
     rm -f "$HOME/.codex/instructions.md"
 
     if [ -L "$HOME/.codex/skills" ]; then
@@ -318,5 +321,40 @@ in
     mkdir -p "$HOME/.gemini"
     rm -f "$target"
     install -m 600 ${pkgs.writeText "gemini-settings.json" geminiSettingsJson} "$target"
+  '';
+
+  # Claude Code reads user-scope MCP servers from ~/.claude.json (NOT
+  # settings.json). That file also holds Claude's runtime state (OAuth, caches,
+  # per-project trust), so merge the `mcpServers` key in instead of overwriting.
+  home.activation.claudeMcpServers = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    target="$HOME/.claude.json"
+    src=${pkgs.writeText "claude-mcp.json" mcpJson}
+    mkdir -p "$HOME/.claude"
+    if [ -f "$target" ]; then
+      ${pkgs.jq}/bin/jq --slurpfile m "$src" '.mcpServers = $m[0].mcpServers' \
+        "$target" > "$target.tmp" && mv "$target.tmp" "$target"
+    else
+      cp "$src" "$target"
+    fi
+    chmod 600 "$target"
+  '';
+
+  # Codex reads MCP servers from ~/.codex/config.toml `[mcp_servers.*]` tables.
+  # config.toml is mutated by Codex at runtime, so replace only the mcp_servers
+  # table (preserving every other key) via a structured TOML merge.
+  home.activation.codexMcpServers = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    target="$HOME/.codex/config.toml"
+    fragJson=${pkgs.writeText "codex-mcp.json" codexMcpJson}
+    mkdir -p "$HOME/.codex"
+    fragToml="$(mktemp)"
+    ${pkgs.yq-go}/bin/yq -p json -o toml '.' "$fragJson" > "$fragToml"
+    if [ -f "$target" ]; then
+      ${pkgs.yq-go}/bin/yq ea -p toml -o toml \
+        'select(fi==0).mcp_servers = select(fi==1).mcp_servers | select(fi==0)' \
+        "$target" "$fragToml" > "$target.tmp" && mv "$target.tmp" "$target"
+    else
+      cp "$fragToml" "$target"
+    fi
+    rm -f "$fragToml"
   '';
 }
