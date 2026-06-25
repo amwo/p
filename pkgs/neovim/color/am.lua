@@ -1,9 +1,9 @@
 local set = vim.api.nvim_set_hl
 local cmd = vim.cmd
 
-local normal_bg    = "#111111"
+local normal_bg    = "#000000"
 local cursorline_bg= "#222222"
-local nerd_bg      = "#111111"
+local nerd_bg      = "#000000"
 local white        = "#ffffff"
 local gray         = "#808080"
 local pink         = "#ff69b4"
