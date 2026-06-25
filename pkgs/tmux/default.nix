@@ -12,17 +12,20 @@
 
       set -g default-terminal "tmux-256color"
       set -as terminal-overrides ",*:Tc"
+      set -g extended-keys on
       set -g mouse on
 
       # Forward OSC 52 clipboard escapes to the outer terminal (works over SSH).
       set -g set-clipboard on
       set -as terminal-features ",*:clipboard"
+      set -as terminal-features ",*:extkeys"
 
       bind m split-window -vc "#{pane_current_path}"
       bind v split-window -vc "#{pane_current_path}"
       bind enter split-window -hc "#{pane_current_path}"
       bind -n M-Enter split-window -vc "#{pane_current_path}"
       bind -n M-S-Enter split-window -hc "#{pane_current_path}"
+      bind -n S-Enter send-keys C-j
       bind -r h select-pane -L
       bind -r j select-pane -D
       bind -r k select-pane -U
