@@ -198,7 +198,28 @@ let
   # Codex uses TOML `[mcp_servers.<id>]` tables. The transport is inferred from
   # the keys (url => streamable HTTP, command => stdio), so strip the Claude-only
   # `type` field. Emitted as JSON here and converted to TOML at activation.
-  codexMcpServers = lib.mapAttrs (_: v: builtins.removeAttrs v [ "type" ]) mcpServers;
+  codexMcpDisabledByDefault = [
+    "figma"
+    "github"
+    "storybook-mcp"
+    "vercel"
+  ]
+  ++ lib.optionals pkgs.stdenv.isLinux [
+    "xcodebuildmcp"
+  ];
+  codexMcpServerOverrides = {
+    github = {
+      bearer_token_env_var = "CODEX_GITHUB_PERSONAL_ACCESS_TOKEN";
+    };
+  };
+  codexMcpServers = lib.mapAttrs (
+    name: v:
+    (builtins.removeAttrs v [ "type" ])
+    // (codexMcpServerOverrides.${name} or { })
+    // lib.optionalAttrs (lib.elem name codexMcpDisabledByDefault) {
+      enabled = false;
+    }
+  ) mcpServers;
   codexMcpJson = builtins.toJSON { mcp_servers = codexMcpServers; };
   claudeSettingsJson = builtins.toJSON {
     hooks = {
