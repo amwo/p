@@ -41,6 +41,7 @@
     ../pkgs/antigravity-cli
     ../pkgs/gh
     ../pkgs/git
+    ../pkgs/herdr
     ../pkgs/hermes-agent
     ../pkgs/htop
     ../pkgs/jq

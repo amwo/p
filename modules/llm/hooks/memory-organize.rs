@@ -1,9 +1,10 @@
 //! Keep project-root .memory/ lean and index-shaped.
 //!
-//! Runs as a PostToolUse hook on Write|Edit. Memory bloat lowers an agent's
-//! efficiency, so every entry must be a small, topic-scoped unit and the
-//! directory must expose a minimal INDEX.md. The agent then loads only the
-//! index plus the single entry it needs, instead of the whole memory store.
+//! Runs as a PostToolUse hook on Write|Edit, and can also run without a file
+//! path from turn-level hooks. Memory bloat lowers an agent's efficiency, so
+//! every entry must be a small, topic-scoped unit and the directory must expose
+//! a minimal INDEX.md. The agent then loads only the index plus the single
+//! entry it needs, instead of the whole memory store.
 //!
 //! Contract (shared by Claude and Codex):
 //! - stdin : JSON tool event (both schemas are handled).
@@ -39,7 +40,13 @@ fn main() {
         .or_else(|| json_string(&input, "absolute_path"))
     {
         Some(p) => p,
-        None => exit(0),
+        None => {
+            if let Some(root) = cwd_memory_root() {
+                validate_memory_root(&root);
+                write_index(&root);
+            }
+            exit(0);
+        }
     };
     if !path.ends_with(".md") {
         exit(0);
@@ -54,19 +61,23 @@ fn main() {
         exit(0); // index is auto-managed
     }
 
-    let text = match fs::read_to_string(&abs) {
+    validate_memory_entry(&abs, &root, path.as_str());
+    write_index(&root);
+    exit(0);
+}
+
+fn validate_memory_entry(abs: &Path, root: &Path, fallback: &str) {
+    let text = match fs::read_to_string(abs) {
         Ok(t) => t,
-        Err(_) => exit(0), // nothing to validate (e.g. deletion)
+        Err(_) => return, // nothing to validate (e.g. deletion)
     };
 
-    let rel = abs
-        .strip_prefix(&root)
-        .ok()
-        .and_then(|p| p.to_str())
-        .unwrap_or(path.as_str())
-        .to_string();
+    let rel = relative_path(abs, root).unwrap_or_else(|| fallback.to_string());
+    validate_entry_text(&rel, &text);
+}
 
-    match parse_entry(&text) {
+fn validate_entry_text(rel: &str, text: &str) {
+    match parse_entry(text) {
         None => reject(&format!(
             "{rel}: missing frontmatter. Each .memory entry needs `topic` and \
              `description` to be indexable."
@@ -91,9 +102,17 @@ fn main() {
             }
         }
     }
+}
 
-    write_index(&root);
-    exit(0);
+fn validate_memory_root(root: &Path) {
+    let mut files = Vec::new();
+    collect_md(root, &mut files);
+    for file in files {
+        if file.file_name().and_then(|s| s.to_str()) == Some(INDEX) {
+            continue;
+        }
+        validate_memory_entry(&file, root, "");
+    }
 }
 
 fn reject(msg: &str) -> ! {
@@ -110,6 +129,22 @@ fn absolute(path: &str) -> PathBuf {
     }
 }
 
+fn cwd_memory_root() -> Option<PathBuf> {
+    memory_root_from_cwd(std::env::current_dir().ok()?)
+}
+
+fn memory_root_from_cwd(mut dir: PathBuf) -> Option<PathBuf> {
+    loop {
+        let root = dir.join(MARKER);
+        if root.is_dir() {
+            return Some(root);
+        }
+        if !dir.pop() {
+            return None;
+        }
+    }
+}
+
 /// Path up to and including the nearest `.memory` component.
 fn memory_root(abs: &Path) -> Option<PathBuf> {
     let mut acc = PathBuf::new();
@@ -120,6 +155,13 @@ fn memory_root(abs: &Path) -> Option<PathBuf> {
         }
     }
     None
+}
+
+fn relative_path(abs: &Path, root: &Path) -> Option<String> {
+    abs.strip_prefix(root)
+        .ok()
+        .and_then(|p| p.to_str())
+        .map(ToString::to_string)
 }
 
 /// Read a top-level `key: value` from a frontmatter block.
@@ -282,4 +324,53 @@ fn write_index(root: &Path) {
         Err(_) => format!("# Memory Index\n\n{body}\n"),
     };
     let _ = fs::write(&index_path, contents);
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::time::{SystemTime, UNIX_EPOCH};
+
+    fn temp_dir(name: &str) -> PathBuf {
+        let stamp = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap()
+            .as_nanos();
+        std::env::temp_dir().join(format!(
+            "memory-organize-{name}-{}-{stamp}",
+            std::process::id()
+        ))
+    }
+
+    #[test]
+    fn memory_root_from_cwd_finds_parent_memory_dir() {
+        let dir = temp_dir("parent");
+        let memory = dir.join(MARKER);
+        let child = dir.join("sub").join("dir");
+        fs::create_dir_all(&memory).unwrap();
+        fs::create_dir_all(&child).unwrap();
+
+        assert_eq!(memory_root_from_cwd(child), Some(memory));
+
+        let _ = fs::remove_dir_all(dir);
+    }
+
+    #[test]
+    fn build_index_groups_entries_by_topic() {
+        let dir = temp_dir("index");
+        let memory = dir.join(MARKER);
+        fs::create_dir_all(&memory).unwrap();
+        fs::write(
+            memory.join("entry.md"),
+            "---\ntopic: diagnostics\ndescription: indexed entry.\n---\n\nbody\n",
+        )
+        .unwrap();
+
+        let index = build_index(&memory);
+
+        assert!(index.contains("## diagnostics"));
+        assert!(index.contains("- **entry** — indexed entry.  `entry.md`"));
+
+        let _ = fs::remove_dir_all(dir);
+    }
 }

@@ -12,6 +12,16 @@
       "description": "Keep project-root .memory/ lean and index-shaped. On every write under .memory/, require each entry to declare `topic` + `description`, reject oversized entries, and rebuild a minimal topic-grouped INDEX.md so an agent loads only the index plus the single entry it needs."
     },
     {
+      "id": "memory-organize-stop",
+      "on": "stop",
+      "match": {},
+      "run": { "script": "memory-organize" },
+      "blocking": true,
+      "timeout": 15,
+      "targets": ["claude", "codex"],
+      "description": "Backstop for tool runtimes whose edit operations are not exposed as native hook events. At turn stop, scan project-root .memory/ and rebuild INDEX.md."
+    },
+    {
       "id": "format-and-lint",
       "on": "post-tool",
       "match": { "edit": true },
