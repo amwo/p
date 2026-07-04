@@ -57,12 +57,14 @@ let
   # Claude Code is lenient but Codex/Gemini reject malformed frontmatter, so
   # catch it here at apply time instead of silently skipping skills at runtime.
   validatedSkills = pkgs.runCommand "llm-skills" { nativeBuildInputs = [ pkgs.yq-go ]; } ''
+    fmerr="$PWD/fmerr"
     for f in ${skillsDir}/*/SKILL.md; do
       [ -f "$f" ] || continue
-      if ! awk 'NR==1 && $0=="---"{fm=1;next} fm && $0=="---"{exit} fm{print}' "$f" | yq -e '.' >/dev/null 2>/tmp/fmerr; then
-        echo "ERROR: invalid SKILL.md frontmatter (YAML): $f" >&2; cat /tmp/fmerr >&2; exit 1
+      if ! awk 'NR==1 && $0=="---"{fm=1;next} fm && $0=="---"{exit} fm{print}' "$f" | yq -e '.' >/dev/null 2>"$fmerr"; then
+        echo "ERROR: invalid SKILL.md frontmatter (YAML): $f" >&2; cat "$fmerr" >&2; exit 1
       fi
     done
+    rm -f "$fmerr"
     mkdir -p "$out"
     cp -R ${skillsDir}/. "$out/"
   '';
@@ -73,9 +75,10 @@ let
     pkgs.runCommand name { nativeBuildInputs = [ pkgs.yq-go ]; } ''
       cp -r ${agentsDir} "$out"
       chmod -R u+w "$out"
+      fmerr="$PWD/fmerr"
       for file in "$out"/*.md; do
-        if ! awk 'NR==1 && $0=="---"{fm=1;next} fm && $0=="---"{exit} fm{print}' "$file" | yq -e '.' >/dev/null 2>/tmp/fmerr; then
-          echo "ERROR: invalid agent frontmatter (YAML): $file" >&2; cat /tmp/fmerr >&2; exit 1
+        if ! awk 'NR==1 && $0=="---"{fm=1;next} fm && $0=="---"{exit} fm{print}' "$file" | yq -e '.' >/dev/null 2>"$fmerr"; then
+          echo "ERROR: invalid agent frontmatter (YAML): $file" >&2; cat "$fmerr" >&2; exit 1
         fi
         tmp="$file.tmp"
         awk -v commonFile="${agentCommon}" '
@@ -101,12 +104,14 @@ let
         ' "$file" > "$tmp"
         mv "$tmp" "$file"
       done
+      rm -f "$fmerr"
       ${extraCommands}
     '';
   claudeAgentsDir = buildAgentsDir "claude-agents" "";
   geminiAgentsDir = buildAgentsDir "gemini-agents" ''
     for file in "$out"/*.md; do
-      sed -i \
+      tmp="$file.tmp"
+      sed \
         -e 's/"Read"/"read_file"/g' \
         -e 's/"Write"/"write_file"/g' \
         -e 's/"Edit"/"replace"/g' \
@@ -115,7 +120,8 @@ let
         -e 's/"Glob"/"glob"/g' \
         -e '/^model: opus$/d' \
         -e '/^model: sonnet$/d' \
-        "$file"
+        "$file" > "$tmp"
+      mv "$tmp" "$file"
     done
   '';
   mcpServers = {
