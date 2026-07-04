@@ -203,8 +203,6 @@ let
     "github"
     "storybook-mcp"
     "vercel"
-  ]
-  ++ lib.optionals pkgs.stdenv.isLinux [
     "xcodebuildmcp"
   ];
   codexMcpServerOverrides = {
