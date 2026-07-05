@@ -10,6 +10,6 @@
   };
 
   home.shellAliases = {
-    codex = "codex -a never -s workspace-write -c 'sandbox_workspace_write.network_access=true'";
+    codex = "codex -a never -s danger-full-access";
   };
 }
