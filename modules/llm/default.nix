@@ -42,7 +42,7 @@ let
     When asked to create a commit, use these exact command shapes:
 
     - `rtk git add -- <paths>`
-    - `rtk git commit --no-verify -m "<message>"`
+    - `rtk git commit --no-gpg-sign --no-verify -m "<message>"`
 
     Do not request `danger-full-access` just to create a commit.
 
@@ -241,12 +241,15 @@ let
       project-edit = {
         filesystem = {
           ":minimal" = "read";
+          "~/.config/git" = "read";
+          "~/.local/state/nix/profiles" = "read";
+          "~/.nix-profile" = "read";
           glob_scan_max_depth = 3;
           ":workspace_roots" = {
             "." = "write";
             ".agents" = "read";
             ".codex" = "read";
-            ".git" = "read";
+            ".git" = "write";
             "**/*.env" = "deny";
           };
         };
@@ -261,6 +264,18 @@ let
         pattern = ["rtk", "git", "add", "--"],
         decision = "allow",
         justification = "Allow Codex to stage explicit repository paths.",
+    )
+
+    prefix_rule(
+        pattern = ["rtk", "git", "commit", "--no-gpg-sign", "--no-verify", "-m"],
+        decision = "allow",
+        justification = "Allow Codex to create commits without running hooks or signing.",
+    )
+
+    prefix_rule(
+        pattern = ["rtk", "git", "commit", "--no-gpg-sign", "--no-verify", "--message"],
+        decision = "allow",
+        justification = "Allow Codex to create commits without running hooks or signing.",
     )
 
     prefix_rule(
