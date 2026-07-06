@@ -258,7 +258,7 @@ let
           };
         };
         network = {
-          enabled = false;
+          enabled = true;
         };
       };
     };
