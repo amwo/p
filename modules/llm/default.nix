@@ -244,6 +244,10 @@ let
           "~/.config/git" = "read";
           "~/.local/state/nix/profiles" = "read";
           "~/.nix-profile" = "read";
+          # rtk is a Home Manager profile symlink into the Nix store. Its
+          # wrapper also executes store paths for bash, git, glibc, and the
+          # wrapped binary; without this, zsh reports "operation not permitted".
+          "/nix/store" = "read";
           glob_scan_max_depth = 3;
           ":workspace_roots" = {
             "." = "write";
