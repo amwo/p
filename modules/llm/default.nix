@@ -37,6 +37,15 @@ let
     - `rtk sed -n '1,120p' package.json`
     - `rtk git status`
 
+    # Git commit policy
+
+    When asked to create a commit, use these exact command shapes:
+
+    - `rtk git add -- <paths>`
+    - `rtk git commit --no-verify -m "<message>"`
+
+    Do not request `danger-full-access` just to create a commit.
+
     ${instructions}
   '';
   cursorRule = ''
@@ -225,6 +234,47 @@ let
     }
   ) mcpServers;
   codexMcpJson = builtins.toJSON { mcp_servers = codexMcpServers; };
+  codexRuntimeJson = builtins.toJSON {
+    approval_policy = "never";
+    default_permissions = "project-edit";
+    permissions = {
+      project-edit = {
+        filesystem = {
+          ":minimal" = "read";
+          glob_scan_max_depth = 3;
+          ":workspace_roots" = {
+            "." = "write";
+            ".agents" = "read";
+            ".codex" = "read";
+            ".git" = "read";
+            "**/*.env" = "deny";
+          };
+        };
+        network = {
+          enabled = false;
+        };
+      };
+    };
+  };
+  codexRules = ''
+    prefix_rule(
+        pattern = ["rtk", "git", "add", "--"],
+        decision = "allow",
+        justification = "Allow Codex to stage explicit repository paths.",
+    )
+
+    prefix_rule(
+        pattern = ["rtk", "git", "commit", "--no-verify", "-m"],
+        decision = "allow",
+        justification = "Allow Codex to create commits without running hooks.",
+    )
+
+    prefix_rule(
+        pattern = ["rtk", "git", "commit", "--no-verify", "--message"],
+        decision = "allow",
+        justification = "Allow Codex to create commits without running hooks.",
+    )
+  '';
   claudeSettingsJson = builtins.toJSON {
     hooks = {
       PreToolUse = [
@@ -286,6 +336,10 @@ in
     # manually (owned by codex).
     ".codex/hooks.json" = {
       text = builtins.toJSON hooksCompiled.codex;
+      force = true;
+    };
+    ".codex/rules/nix-managed.rules" = {
+      text = codexRules;
       force = true;
     };
     ".cursor/mcp.json".text = mcpJson;
@@ -366,20 +420,37 @@ in
 
   # Codex reads MCP servers from ~/.codex/config.toml `[mcp_servers.*]` tables.
   # config.toml is mutated by Codex at runtime, so replace only the mcp_servers
-  # table (preserving every other key) via a structured TOML merge.
-  home.activation.codexMcpServers = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+  # table and managed runtime defaults (preserving every other key) via a
+  # structured TOML merge.
+  home.activation.codexConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     target="$HOME/.codex/config.toml"
     fragJson=${pkgs.writeText "codex-mcp.json" codexMcpJson}
+    runtimeJson=${pkgs.writeText "codex-runtime.json" codexRuntimeJson}
     mkdir -p "$HOME/.codex"
     fragToml="$(mktemp)"
+    runtimeToml="$(mktemp)"
     ${pkgs.yq-go}/bin/yq -p json -o toml '.' "$fragJson" > "$fragToml"
+    ${pkgs.yq-go}/bin/yq -p json -o toml '.' "$runtimeJson" > "$runtimeToml"
     if [ -f "$target" ]; then
       ${pkgs.yq-go}/bin/yq ea -p toml -o toml \
-        'select(fi==0).mcp_servers = select(fi==1).mcp_servers | select(fi==0)' \
-        "$target" "$fragToml" > "$target.tmp" && mv "$target.tmp" "$target"
+        'select(fi==0) as $base
+          | select(fi==1) as $mcp
+          | select(fi==2) as $runtime
+          | $base
+          | .mcp_servers = $mcp.mcp_servers
+          | .approval_policy = $runtime.approval_policy
+          | .default_permissions = $runtime.default_permissions
+          | .permissions."project-edit" = $runtime.permissions."project-edit"
+          | del(.sandbox_mode)
+          | del(.sandbox_workspace_write)' \
+        "$target" "$fragToml" "$runtimeToml" > "$target.tmp" && mv "$target.tmp" "$target"
     else
-      cp "$fragToml" "$target"
+      ${pkgs.yq-go}/bin/yq ea -p toml -o toml \
+        'select(fi==0) as $mcp
+          | select(fi==1) as $runtime
+          | $mcp * $runtime' \
+        "$fragToml" "$runtimeToml" > "$target"
     fi
-    rm -f "$fragToml"
+    rm -f "$fragToml" "$runtimeToml"
   '';
 }

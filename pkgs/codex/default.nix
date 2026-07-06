@@ -4,12 +4,6 @@
     enable = true;
     # config.toml is intentionally NOT managed here: `codex plugin ...` mutates
     # it at runtime (marketplace/plugin/MCP entries), which fails when it is a
-    # read-only Nix store symlink. config.toml is therefore owned by codex; the
-    # runtime defaults below are applied at launch instead of being written into
-    # config.toml.
-  };
-
-  home.shellAliases = {
-    codex = "codex -a never -s danger-full-access";
+    # read-only Nix store symlink. Runtime defaults are merged by modules/llm.
   };
 }
