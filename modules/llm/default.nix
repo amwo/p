@@ -236,32 +236,7 @@ let
   codexMcpJson = builtins.toJSON { mcp_servers = codexMcpServers; };
   codexRuntimeJson = builtins.toJSON {
     approval_policy = "never";
-    default_permissions = "project-edit";
-    permissions = {
-      project-edit = {
-        filesystem = {
-          ":minimal" = "read";
-          "~/.config/git" = "read";
-          "~/.local/state/nix/profiles" = "read";
-          "~/.nix-profile" = "read";
-          # rtk is a Home Manager profile symlink into the Nix store. Its
-          # wrapper also executes store paths for bash, git, glibc, and the
-          # wrapped binary; without this, zsh reports "operation not permitted".
-          "/nix/store" = "read";
-          glob_scan_max_depth = 3;
-          ":workspace_roots" = {
-            "." = "write";
-            ".agents" = "read";
-            ".codex" = "read";
-            ".git" = "write";
-            "**/*.env" = "deny";
-          };
-        };
-        network = {
-          enabled = true;
-        };
-      };
-    };
+    sandbox_mode = "danger-full-access";
   };
   codexRules = ''
     prefix_rule(
@@ -458,9 +433,9 @@ in
           | $base
           | .mcp_servers = $mcp.mcp_servers
           | .approval_policy = $runtime.approval_policy
-          | .default_permissions = $runtime.default_permissions
-          | .permissions."project-edit" = $runtime.permissions."project-edit"
-          | del(.sandbox_mode)
+          | .sandbox_mode = $runtime.sandbox_mode
+          | del(.default_permissions)
+          | del(.permissions)
           | del(.sandbox_workspace_write)' \
         "$target" "$fragToml" "$runtimeToml" > "$target.tmp" && mv "$target.tmp" "$target"
     else

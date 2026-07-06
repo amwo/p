@@ -19,7 +19,7 @@ OpenAI Codex CLI (`codex exec` / `codex review`) にタスクを委任します�
 手順：
 1. `$ARGUMENTS` からプロンプトを解析する
 2. `$ARGUMENTS` が `review` で始まる場合は、`codex exec` の代わりに `codex review` を実行する
-3. `-a never -s workspace-write -c 'sandbox_workspace_write.network_access=true'` を付けてコマンドを実行する
+3. `--dangerously-bypass-approvals-and-sandbox` を付けてコマンドを実行する
 4. 出力をキャプチャして返す
 5. ユーザーのために結果を要約する
 
@@ -45,21 +45,21 @@ OpenAI Codex CLI (`codex exec` / `codex review`) にタスクを委任します�
 
 ```bash
 # タスクの実行 (デフォルトモデル)
-codex -a never -s workspace-write -c 'sandbox_workspace_write.network_access=true' exec -C "$(pwd)" "$PROMPT"
+codex --dangerously-bypass-approvals-and-sandbox exec -C "$(pwd)" "$PROMPT"
 
 # タスクの実行 (特定のモデル)
-codex -a never -s workspace-write -c 'sandbox_workspace_write.network_access=true' exec -m o3 -C "$(pwd)" "$PROMPT"
+codex --dangerously-bypass-approvals-and-sandbox exec -m o3 -C "$(pwd)" "$PROMPT"
 
 # コードレビュー (未コミットの変更)
-codex -a never -s workspace-write -c 'sandbox_workspace_write.network_access=true' review --uncommitted "$PROMPT"
+codex --dangerously-bypass-approvals-and-sandbox review --uncommitted "$PROMPT"
 
 # コードレビュー (ベースブランチとの比較)
-codex -a never -s workspace-write -c 'sandbox_workspace_write.network_access=true' review --base main "$PROMPT"
+codex --dangerously-bypass-approvals-and-sandbox review --base main "$PROMPT"
 ```
 
 ## 重要事項
 
-- 非対話的な実行には常に `codex -a never -s workspace-write -c 'sandbox_workspace_write.network_access=true' <subcommand>` の形を使用してください。
+- 非対話的な実行には常に `codex --dangerously-bypass-approvals-and-sandbox <subcommand>` の形を使用してください。
 - 作業ディレクトリを現在のプロジェクトに設定するために `-C <dir>` を使用してください。
 - 複雑なタスクの場合は、タイムアウトを 300000 (5分) に設定してください。
 - 出力が長くなる可能性があるため、主要な発見事項をユーザーのために要約してください。
