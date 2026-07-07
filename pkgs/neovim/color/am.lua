@@ -3,7 +3,7 @@ local cmd = vim.cmd
 
 local normal_bg    = "#000000"
 local cursorline_bg= "#222222"
-local nerd_bg      = "#000000"
+local tree_bg      = "#000000"
 local white        = "#ffffff"
 local gray         = "#808080"
 local pink         = "#ff69b4"
@@ -187,31 +187,26 @@ cmd [[
   hi! link Typedef        Type
 ]]
 
-local nerd_fg = white
-local nerd_dim= gray
+local tree_fg = white
+local tree_dim= gray
 
-set(0, "NERDTreeDir",              { fg = nerd_fg, bg = nerd_bg })
-set(0, "NERDTreeDirSlash",         { fg = nerd_fg, bg = nerd_bg })
-set(0, "NERDTreeFile",             { fg = nerd_fg, bg = nerd_bg })
-set(0, "NERDTreeExecFile",         { fg = nerd_fg, bg = nerd_bg })
-set(0, "NERDTreeOpenable",         { fg = nerd_fg, bg = nerd_bg })
-set(0, "NERDTreeClosable",         { fg = nerd_fg, bg = nerd_bg })
-set(0, "NERDTreeUp",               { fg = nerd_dim, bg = nerd_bg })
-set(0, "NERDTreeCWD",              { fg = nerd_fg,  bg = nerd_bg })
-set(0, "NERDTreeHelp",             { fg = nerd_dim, bg = nerd_bg })
-set(0, "NERDTreeToggleOn",         { fg = nerd_fg,  bg = nerd_bg })
-set(0, "NERDTreeToggleOff",        { fg = nerd_dim, bg = nerd_bg })
-set(0, "NERDTreeBookmark",         { fg = nerd_fg,  bg = nerd_bg })
-set(0, "NERDTreeBookmarkName",     { fg = nerd_fg,  bg = nerd_bg })
-set(0, "NERDTreeBookmarksHeader",  { fg = nerd_fg,  bg = nerd_bg })
-set(0, "NERDTreeBookmarksLeader",  { fg = nerd_dim, bg = nerd_bg })
-set(0, "NERDTreeBookmarkTable",    { fg = nerd_fg,  bg = nerd_bg })
-set(0, "NERDTreePart",             { fg = nerd_dim, bg = nerd_bg })
-set(0, "NERDTreePartFile",         { fg = nerd_fg,  bg = nerd_bg })
-set(0, "NERDTreeLinkTarget",       { fg = nerd_fg,  bg = nerd_bg })
-set(0, "NERDTreeLinkFile",         { fg = nerd_fg,  bg = nerd_bg })
-set(0, "NERDTreeLinkDir",          { fg = nerd_fg,  bg = nerd_bg })
-set(0, "NERDTreeCurrentNode",      { fg = pink,     bg = nerd_bg, bold = true })
-set(0, "NERDTreeRO",               { fg = nerd_dim, bg = nerd_bg })
-set(0, "NERDTreeFlags",            { fg = nerd_fg,  bg = nerd_bg })
-set(0, "NERDTreeCursorLine",       { bg = cursorline_bg })
+set(0, "NeoTreeNormal",              { fg = tree_fg, bg = tree_bg })
+set(0, "NeoTreeNormalNC",            { fg = tree_fg, bg = tree_bg })
+set(0, "NeoTreeDirectoryName",       { fg = tree_fg, bg = tree_bg })
+set(0, "NeoTreeDirectoryIcon",       { fg = tree_fg, bg = tree_bg })
+set(0, "NeoTreeFileName",            { fg = tree_fg, bg = tree_bg })
+set(0, "NeoTreeFileIcon",            { fg = tree_fg, bg = tree_bg })
+set(0, "NeoTreeRootName",            { fg = tree_fg, bg = tree_bg })
+set(0, "NeoTreeSymbolicLinkTarget",  { fg = tree_fg, bg = tree_bg })
+set(0, "NeoTreeIndentMarker",        { fg = tree_dim, bg = tree_bg })
+set(0, "NeoTreeExpander",            { fg = tree_dim, bg = tree_bg })
+set(0, "NeoTreeModified",            { fg = tree_fg, bg = tree_bg })
+set(0, "NeoTreeGitAdded",            { fg = tree_fg, bg = tree_bg })
+set(0, "NeoTreeGitModified",         { fg = tree_fg, bg = tree_bg })
+set(0, "NeoTreeGitDeleted",          { fg = tree_dim, bg = tree_bg })
+set(0, "NeoTreeGitUntracked",        { fg = tree_fg, bg = tree_bg })
+set(0, "NeoTreeGitIgnored",          { fg = tree_dim, bg = tree_bg })
+set(0, "NeoTreeGitUnstaged",         { fg = tree_fg, bg = tree_bg })
+set(0, "NeoTreeGitStaged",           { fg = tree_fg, bg = tree_bg })
+set(0, "NeoTreeGitConflict",         { fg = tree_fg, bg = tree_bg })
+set(0, "NeoTreeCursorLine",          { bg = cursorline_bg })

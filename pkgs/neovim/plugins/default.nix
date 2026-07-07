@@ -2,11 +2,11 @@
 
 let
   conform = import ./conform { inherit pkgs; };
-  nerdtree = import ./nerdtree { inherit pkgs; };
+  neo-tree = import ./neo-tree { inherit pkgs; };
   fzf = import ./fzf { inherit pkgs; };
 in
 [
   conform
   fzf
-  nerdtree
+  neo-tree
 ]
