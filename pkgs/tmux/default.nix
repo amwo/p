@@ -34,6 +34,7 @@
       bind -n C-Down select-pane -D
       bind -n C-Up select-pane -U
       bind -n C-Right select-pane -R
+      bind -n C-. if-shell -F '#{==:#{pane_current_command},nvim}' 'send-keys Escape "[27;5;46~"' 'send-keys C-.'
       bind -n C-S-Left resize-pane -L 5
       bind -n C-S-Down resize-pane -D 5
       bind -n C-S-Up resize-pane -U 5

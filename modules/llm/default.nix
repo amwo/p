@@ -168,11 +168,10 @@ let
         "next-devtools-mcp"
       ];
     };
-    playwright = {
-      command = "npx";
+    lightpanda = {
+      command = "lightpanda";
       args = [
-        "-y"
-        "@playwright/mcp"
+        "mcp"
       ];
     };
     solana = {

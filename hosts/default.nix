@@ -46,6 +46,7 @@
     ../pkgs/htop
     ../pkgs/jq
     ../pkgs/less
+    ../pkgs/lightpanda
     ../pkgs/llama-cpp-local
     ../pkgs/loop-ctl
     ../pkgs/neovim
@@ -58,6 +59,7 @@
     ../pkgs/tmux
     ../pkgs/zsh
   ];
+
 
   programs.home-manager.enable = true;
 }
