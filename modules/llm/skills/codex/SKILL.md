@@ -1,6 +1,6 @@
 ---
 name: codex
-description: OpenAI Codex CLI エージェントにタスクを委任します。ユーザーが Codex で何かを実行するように依頼したとき、別の AI からセカンドオピニオンを得たいとき、またはサブタスクを Codex に委任したいときに使用します。典型的なクエリには、「これを codex で実行して」、「codex にレビューを依頼して」、「codex に実装させて」、「これについての codex の意見は」などがあります。
+description: ユーザーが Codex で何かを実行するように依頼したとき、別の AI からセカンドオピニオンを得たいとき、またはサブタスクを Codex に委任したいときに使用します。OpenAI Codex CLI エージェントにタスクを委任します。典型的なクエリには、「これを codex で実行して」、「codex にレビューを依頼して」、「codex に実装させて」、「これについての codex の意見は」などがあります。
 allowed-tools: Bash, Read, Glob, Grep
 user-invocable: true
 disable-model-invocation: true

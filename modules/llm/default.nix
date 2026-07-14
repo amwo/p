@@ -127,6 +127,8 @@ let
         -e 's/"Bash"/"run_shell_command"/g' \
         -e 's/"Grep"/"grep_search"/g' \
         -e 's/"Glob"/"glob"/g' \
+        -e 's/, *"mcp__[^"]*"//g' \
+        -e 's/"mcp__[^"]*", *//g' \
         -e '/^model: opus$/d' \
         -e '/^model: sonnet$/d' \
         "$file" > "$tmp"

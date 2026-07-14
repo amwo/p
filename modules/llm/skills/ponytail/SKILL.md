@@ -1,7 +1,7 @@
 ---
 name: ponytail
 description: >
-  High-quality minimal implementation discipline for coding tasks. Use when
+  High-quality minimal implementation discipline for coding tasks; use when
   writing, fixing, refactoring, reviewing, designing code, or choosing
   libraries and dependencies. Also use when the user says "ponytail", "YAGNI",
   "simplify", "minimal", "do less", "avoid over-engineering", or asks for the

@@ -1,6 +1,6 @@
 ---
 name: smart-contract-auditor
-description: Systematic Solidity smart contract security audit using a 370-item checklist spanning 13 categories (attack patterns, DeFi, integrations, tokens, cross-chain, signatures, etc.). Use whenever the user asks to audit, review, find bugs in, or assess the security of Solidity/EVM smart contracts, or mentions solidit, slither findings, Code4rena/Sherlock/Cyfrin style review, reentrancy, oracle manipulation, access control review, or wants a checklist-driven review of a protocol. Trigger even when the user only provides a contract file and asks "is this safe?" or "any issues?".
+description: Use whenever the user asks to audit, review, find bugs in, or assess the security of Solidity/EVM smart contracts, or mentions solidit, slither findings, Code4rena/Sherlock/Cyfrin style review, reentrancy, oracle manipulation, access control review, or wants a checklist-driven review of a protocol — trigger even when the user only provides a contract file and asks "is this safe?" or "any issues?". Runs a systematic Solidity smart contract security audit using a 370-item checklist spanning 13 categories (attack patterns, DeFi, integrations, tokens, cross-chain, signatures, etc.).
 ---
 
 # Smart Contract Security Audit

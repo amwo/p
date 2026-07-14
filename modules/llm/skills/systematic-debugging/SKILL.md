@@ -1,6 +1,6 @@
 ---
 name: systematic-debugging
-description: Four-phase debugging framework that ensures root cause investigation before attempting fixes. Never jump to solutions. Use when encountering any bug, test failure, or unexpected behavior, before proposing fixes.
+description: Use when encountering any bug, test failure, or unexpected behavior, before proposing a fix. Four-phase framework for root cause investigation before attempting fixes — never jump to solutions.
 version: 2.1.0
 languages: all
 ---
@@ -113,8 +113,6 @@ You MUST complete each phase before proceeding to the next.
 
    **WHEN error is deep in call stack:**
 
-   See skills/root-cause-tracing for backward tracing technique
-
    **Quick version:**
    - Where does bad value originate?
    - What called this with bad value?
@@ -178,7 +176,7 @@ You MUST complete each phase before proceeding to the next.
    - Automated test if possible
    - One-off test script if no framework
    - MUST have before fixing
-   - See skills/testing/test-driven-development for writing proper failing tests
+   - See skills/test-driven-development for writing proper failing tests
 
 2. **Implement Single Fix**
    - Address the root cause identified
@@ -280,9 +278,7 @@ If systematic investigation reveals issue is truly environmental, timing-depende
 ## Integration with Other Skills
 
 This skill works with:
-- skills/root-cause-tracing - How to trace back through call stack
-- skills/defense-in-depth - Add validation after finding root cause
-- skills/testing/condition-based-waiting - Replace timeouts identified in Phase 2
+- skills/test-driven-development - Write failing test before implementing fix
 - skills/verification-before-completion - Verify fix worked before claiming success
 
 ## Real-World Impact

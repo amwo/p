@@ -1,6 +1,6 @@
 ---
 name: brainstorming
-description: Interactive idea refinement using Socratic method to develop fully-formed designs. Use when partner describes any feature or project idea, before writing code or implementation plans.
+description: Use when partner describes any feature or project idea, before writing code or implementation plans. Interactive idea refinement using Socratic method to develop fully-formed designs.
 version: 2.2.0
 ---
 
@@ -34,9 +34,7 @@ Transform rough ideas into fully-formed designs through structured questioning a
 
 ### Phase 4: Worktree Setup (for implementation)
 When design is approved and implementation will follow:
-- Announce: "I'm using the Using Git Worktrees skill to set up an isolated workspace."
-- Switch to skills/collaboration/using-git-worktrees
-- Follow that skill's process for directory selection, safety verification, and setup
+- Create and switch to a dedicated git worktree for this feature
 - Return here when worktree ready
 
 ### Phase 5: Planning Handoff
@@ -44,7 +42,7 @@ Ask: "Ready to create the implementation plan?"
 
 When your human partner confirms (any affirmative response):
 - Announce: "I'm using the Writing Plans skill to create the implementation plan."
-- Switch to skills/collaboration/writing-plans skill
+- Switch to skills/writing-plans skill
 - Create detailed plan in the worktree
 
 ## When to Revisit Earlier Phases
@@ -56,14 +54,6 @@ When your human partner confirms (any affirmative response):
 - Something doesn't make sense → Go back and clarify
 
 **Don't force forward linearly** when going backward would give better results.
-
-## Related Skills
-
-**During exploration:**
-- When approaches have genuine trade-offs: skills/architecture/preserving-productive-tensions
-
-**Before proposing changes to existing code:**
-- Understand why it exists: skills/research/tracing-knowledge-lineages
 
 ## Remember
 - One question per message during Phase 1
