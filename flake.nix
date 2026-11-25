@@ -2,8 +2,7 @@
   description = "am.nix";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    flake-parts.url = "github:hercules-ci/flake-parts";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -14,59 +13,50 @@
   };
 
   outputs =
-    inputs@{
-      self,
+    {
       nixpkgs,
-      flake-parts,
       home-manager,
       ...
-    }:
-    flake-parts.lib.mkFlake { inherit inputs; } {
-      systems = [
-        "x86_64-linux"
-        "aarch64-darwin"
-      ];
+    }@inputs:
+    let
+      inherit (nixpkgs) lib;
 
-      perSystem =
-        {
-          config,
-          pkgs,
-          system,
-          ...
-        }:
-        {
-          apps.default = {
-            type = "app";
-            program =
-              let
-                applyScript = pkgs.writeShellScriptBin "apply" ''
-                  HOST=$1
-                  if [ -z "$HOST" ]; then
-                    echo "Error: Please specify a host name."
-                    exit 1
-                  fi
-                  ${inputs.home-manager.packages.${system}.default}/bin/home-manager switch --flake ".#$HOST"
-
-                  exec zsh
-                '';
-              in
-              "${applyScript}/bin/apply";
-          };
-        };
-
-      flake = {
-        homeConfigurations = {
-          "athena" = home-manager.lib.homeManagerConfiguration {
-            pkgs = nixpkgs.legacyPackages."x86_64-linux";
-            extraSpecialArgs = { inherit inputs; };
-            modules = [ ./hosts/default.nix ];
-          };
-          "am" = home-manager.lib.homeManagerConfiguration {
-            pkgs = nixpkgs.legacyPackages."aarch64-darwin";
-            extraSpecialArgs = { inherit inputs; };
-            modules = [ ./hosts/default.nix ];
-          };
-        };
+      hosts = {
+        athena = "x86_64-linux";
+        am = "aarch64-darwin";
       };
+
+      mkHome =
+        system:
+        home-manager.lib.homeManagerConfiguration {
+          pkgs = nixpkgs.legacyPackages.${system};
+          extraSpecialArgs = { inherit inputs; };
+          modules = [ ./hosts/default.nix ];
+        };
+    in
+    {
+      homeConfigurations = lib.mapAttrs (_: mkHome) hosts;
+
+      apps = lib.genAttrs (lib.attrValues hosts) (
+        system:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+          apply = pkgs.writeShellApplication {
+            name = "apply";
+            runtimeInputs = [ home-manager.packages.${system}.default ];
+            text = ''
+              host="''${1:?Error: Please specify a host name.}"
+              home-manager switch --flake ".#$host"
+              exec zsh
+            '';
+          };
+        in
+        {
+          default = {
+            type = "app";
+            program = lib.getExe apply;
+          };
+        }
+      );
     };
 }
